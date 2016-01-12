@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Test page</title>
+<script src="../lib/jquery-1.5.min.js"></script>
+
+<!--REMOVE-->
+<!-- This section will be removed during build process -->
+<script src="../lib/iconv.js"></script>
+<script src="base64.js"></script>
+<script src="vcard.js"></script>
+<script src="jsvcard.js"></script>
+<link rel="stylesheet" href="jsvcard.css" />
+<!--/REMOVE-->
+
+<!--ASSETS-->
+
+</head>
+<body>
+
+<img id="vClickMe" src="../lib/vcard.gif" alt="vCard Logo Little"/>
+
+<br /><br />
+
+<form id="vTargetForm">
+<table>
+	<tr>
+		<td>vCard Version:</td>	
+		<td><input id="vcver" class="vVersion" type="text" size="4" /></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Name prefix:</td> 
+		<td><input class="vNamePrefix" type="text" size="16" />
+		<td>Name postfix:</td> 
+		<td><input class="vNamePostfix" type="text" size="16" />
+	</tr>
+	<tr>
+		<td>First name:</td> 
+		<td><input id="firstname"  class="vFirstName" type="text" size="16" />
+		<td>Middle names:</td> 
+		<td><input id="midnames"  class="vMidNames" type="text" size="16" />
+	</tr>
+	<tr>
+		<td>Last name:</td> 
+		<td><input class="vLastName" type="text" size="16" />
+		<td>Formatted name: </td>
+		<td><input class="vFName" type="text"  size="16" /></td>
+	</tr>
+	
+	<tr>
+		<td>Title:</td>
+		<td><input id="title"  class="vTitle" type="text" size="16" /></td>
+		<td>Organization:</td>
+		<td><input id="title"  class="vOrganization" type="text" size="16" /></td>
+	</tr>
+	
+	<tr>
+		<td>&nbsp;</td> 
+		<td>&nbsp;</td> 
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+
+
+	<tr>
+		<td>Home Address Post Office: </td>
+		<td><input class="vAddressHomePO" type="text"  size="16" /></td>
+		<td>Work Address Post Office: </td>
+		<td><input class="vAddressWorkPO" type="text"  size="16" /></td>		
+	</tr>
+
+	<tr>
+		<td>Home Address Extended: </td>
+		<td><input class="vAddressHomeExt" type="text" size="16" /></td>
+		<td>Work Address Extended: </td>
+		<td><input class="vAddressWorkExt" type="text" size="16" /></td>
+	</tr>
+
+	<tr>
+		<td>Home Address Location: </td>
+		<td><input class="vAddressHomeLocation" type="text" size="16" /></td>
+		<td>Work Address Location: </td>
+		<td><input class="vAddressWorkLocation" type="text" size="16" /></td>
+	</tr>
+
+	<tr>
+		<td>Home Address Street: </td>
+		<td><input class="vAddressHomeStreet" type="text" size="16" /></td>
+		<td>Work Address Street: </td>
+		<td><input class="vAddressWorkStreet" type="text" size="16" /></td>
+	</tr>
+
+	<tr>
+		<td>Home Address Region: </td>
+		<td><input class="vAddressHomeRegion" type="text" size="16" /></td>
+		<td>Work Address Region: </td>
+		<td><input class="vAddressWorkRegion" type="text" size="16" /></td>
+	</tr>
+	
+	<tr>
+		<td>Home Address Postal Code: </td>
+		<td><input class="vAddressHomePostalCode" type="text" size="16" /></td>
+		<td>Work Address Postal Code: </td>
+		<td><input class="vAddressWorkPostalCode" type="text" size="16" /></td>
+	</tr>
+	
+	<tr>
+		<td>Home Address Country: </td>
+		<td><input class="vAddressHomeCountry" type="text" size="16" /></td>
+		<td>Work Address Country: </td>
+		<td><input class="vAddressWorkCountry" type="text" size="16" /></td>
+	</tr>
+
+	<tr>
+		<td>Home Address Label:</td>
+		<td><textarea rows="5" class="vAddressHomeLabel"></textarea></td>
+		<td>Work Address Label:</td>
+		<td><textarea rows="5" class="vAddressWorkLabel"></textarea></td>
+	</tr>
+
+	<tr>
+		<td>&nbsp;</td> 
+		<td>&nbsp;</td> 
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td>Home Voice Telephone:</td> 
+		<td><input class="vTelHomeVoice" /></td> 
+		<td>Work Voice Telephone:</td> 
+		<td><input class="vTelWorkVoice" /></td> 
+	</tr>
+	<tr>
+		<td>Home Fax Telephone:</td> 
+		<td><input class="vTelHomeFax" /></td> 
+		<td>Work Fax Telephone:</td> 
+		<td><input class="vTelWorkFax" /></td> 
+	</tr>
+	<tr>
+		<td>Mobile Telephone:</td> 
+		<td><input class="vTelCellVoice" /></td> 
+		<td>Email:</td> 
+		<td><input class="vEmail" /></td> 
+	</tr>
+
+</table>
+</form>
+
+
+<script type="text/javascript">
+//<![CDATA[
+	jsvcard = new jsvCard();
+	jsvcard.install("vTargetForm","vClickMe","bottom-right");
+//]]>
+</script>
+
+</body>
+</html>
