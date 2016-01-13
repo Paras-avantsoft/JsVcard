@@ -1,0 +1,16 @@
+BEGIN:VCARD
+VERSION:3.0
+PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN
+N:Pavasiya;Paras;;Mr.;
+FN:Mr. Paras Pavasiya
+ORG:AvantsoftIndia;
+TITLE:Jr. Software Developer
+EMAIL;type=INTERNET;type=WORK;type=pref:paras.avantsoft@gmail.com
+item1.EMAIL;type=INTERNET:email@gmail.com
+item1.X-ABLabel:email-clickurl
+TEL;type=WORK;type=VOICE;type=pref:7405738880
+ADR;type=WORK;type=pref:;;A/413\, Atma House\\n0pp. OLD RBI \\nAshram road;Ahmedabad;Gujarat;380006;India
+URL;type=WORK;type=pref:http://companywebsite.com
+UID:123d5bb6-fb7f-45e0-ba3f-0d482eb35ab5
+X-ABUID:123D5BB6-FB7F-45E0-BA3F-0D482EB35AB5:ABPerson
+END:VCARD

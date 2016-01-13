@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>vCard</title>
+    <script src="../lib/iconv.js"></script>
+    <script src="base64.js"></script>
+    <script src="vcard.js"></script>
+</head>
+
+<body>
+    <input type="file" id="myFile" onChange="handleLoad(this);">
+    <script type="text/javascript">
+        var vcard = new vCard();
+
+        function handleLoad(evt) {
+            vcard.handleLoad(evt);
+        }
+    </script>
+</body>
+
+</html>
