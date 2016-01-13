@@ -118,6 +118,96 @@ var vCard = function() {
 
     };
 
+
+    this.parseDirectoryMimeTypeRowV3 = function(orig_row) {
+        var SAFE_CHAR_REGEXP_STR = '[\\x09\\x20\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x7E\\x80-\\xFF]';
+        var QSAFE_CHAR_REGEXP_STR = '[\\x09\\x20\\x21\\x23-\\x7E\\x80-\\xFF]';
+        var GROUP_REGEXP_STR = '[a-zA-Z0-9\\-]+';
+
+        var row = orig_row;
+        // contentline  = [group "."] name *(";" param) ":" value CRLF
+        // group        = 1*(ALPHA / DIGIT / "-")
+
+        var group = null;
+        var group_regexp = new RegExp('^(' + GROUP_REGEXP_STR + ")\\.");
+        var group_arr = group_regexp.exec(row);
+        if (group_arr instanceof Array) {
+            group = group_arr[1];
+            row = row.substring(group_arr[0].length); // cut away group from row to simplify later parsing
+        }
+
+        // Assume the same regex we used for group parsing
+        var name = null;
+        var name_regexp = new RegExp('^(' + GROUP_REGEXP_STR + ')(:|;)');
+        var name_arr = name_regexp.exec(row);
+        if (name_arr instanceof Array) {
+            name = name_arr[1];
+            row = row.substring(name_arr[1].length); // cut away name from row to simplify later parsing but keep tailing ';' or ':'
+        } else {
+            throw "Wrong format: no name found in contentline. Line: " + orig_row;
+        }
+        // param        = param-name "=" param-value *("," param-value)
+        // Note: in vcard 2.1 the param-value is not mandatory (this way we can have params with null values)
+
+        var params = [];
+        if (name_arr instanceof Array && name_arr[2] == ';') {
+            // parse parameters
+            var single_param_regex = new RegExp('^;(' + GROUP_REGEXP_STR + ')(=(' + SAFE_CHAR_REGEXP_STR + '*|"' + QSAFE_CHAR_REGEXP_STR + '"))?(:|;)');
+            var cont = true;
+            do {
+                param_arr = single_param_regex.exec(row);
+                if (param_arr instanceof Array) {
+                    var param_name = param_arr[1];
+                    var param_value = null;
+
+                    if (param_arr[2] !== undefined) {
+                        param_value = param_arr[3];
+                    }
+
+                    // Remove DQUOTE
+                    if (param_value !== null && param_value[0] == '"') {
+                        param_value = param_value.slice(1, -1);
+                    }
+
+
+                    params[params.length] = {
+                        name: param_name,
+                        value: param_value
+                    };
+                    cont = (param_arr[4] == ';') && (param_arr[0].length > 0);
+
+                    // Strip the param away from row except for the tailing ';' or ':'
+                    row = row.substring(param_arr[0].length - 1);
+                } else {
+                    cont = false;
+                }
+            } while (cont);
+        }
+
+        var value = null;
+        var value_regexp = new RegExp('^:(.*)(\x0D\x0A)?$');
+        var value_arr = value_regexp.exec(row);
+        if (value_arr instanceof Array) {
+            value = value_arr[1];
+        } else {
+            throw "Wrong format: no value found in contentline. Line: " + orig_row;
+        }
+
+        // Remove DQUOTE
+        if (value !== null && value[0] == '"') {
+            value = value.slice(1, -1);
+        }
+
+        return {
+            group: group,
+            params: params,
+            name: name,
+            value: value
+        };
+
+    };
+
+
     /**
      * Based on RFC 2425
      * Parses a string of ASCII charachers in an object representing the directory entry.
@@ -130,13 +220,14 @@ var vCard = function() {
         text = text.replace(unfold, "");
 
         var rows = text.split("\r\n");
+        var parseDirectoryMimeTypeRow = text.search('VERSION:3.0') > -1 ? this.parseDirectoryMimeTypeRowV3 : this.parseDirectoryMimeTypeRow;
 
         var parsed_rows = [];
 
         for (i = 0; i < rows.length; i++) {
             // Avoid empty lines
             if (rows[i].length > 0) {
-                parsed_rows[i] = this.parseDirectoryMimeTypeRow(rows[i]);
+                parsed_rows[i] = parseDirectoryMimeTypeRow(rows[i]);
             }
         }
         return parsed_rows;
@@ -210,6 +301,42 @@ var vCard = function() {
      * @returns {String} The decoded value
      */
     this.decodeText = function(x) {
+        // Default encoding
+        var encoding = "7bit";
+        var ind = self.findElement(x.params, 'encoding');
+        if (ind != -1) {
+            encoding = x.params[ind].value.toLowerCase();
+        }
+
+        var charset = "ascii";
+        ind = self.findElement(x.params, 'charset');
+        if (ind != -1) {
+            charset = x.params[ind].value.toLowerCase();
+        }
+
+        var binary_value = [];
+
+        switch (encoding) {
+            case "base64":
+                binary_value = Base64.decode(x.value).split('');
+                break;
+            case "quoted-printable":
+                binary_value = self.decodeQuotedPrintable(x.value);
+                break;
+            default: // 7bit or 8bit
+                binary_value = x.value.split('');
+        }
+
+        // Convert all chars to numbers
+        for (var i = 0; i < binary_value.length; i++) {
+            binary_value[i] = binary_value[i].charCodeAt(0);
+        }
+
+        return Iconv.decode(binary_value, charset);
+    };
+
+    this.decodeEmail = function(x) {
+        debugger;
         // Default encoding
         var encoding = "7bit";
         var ind = self.findElement(x.params, 'encoding');
@@ -442,6 +569,12 @@ var vCard = function() {
         'x-ablabel': this.decodeText,
         'x-socialprofile': this.decodeText,
         'x-abuid': this.decodeText,
+        'x-maidenname': this.decodeText,
+        'x-phonetic-first-name': this.decodeText,
+        'x-phonetic-last-name': this.decodeText,
+        'x-aim': this.decodeText,
+        'impp': this.decodeText,
+        'x-abdate': this.decodeText,
         adr: {
             home: this.decodeAdr,
             work: this.decodeAdr,
@@ -471,21 +604,27 @@ var vCard = function() {
             cell: this.decodeTelV3,
             pager: this.decodeTelV3,
             bbs: this.decodeTelV3,
-            car: this.decodeTelV3
+            car: this.decodeTelV3,
+            iphone: this.decodeTelV3,
+            main: this.decodeTelV3,
+            other: this.decodeTelV3
         },
         email: {
-            internet: this.decodeText,
-            aol: this.decodeText,
-            applelink: this.decodeText,
-            attmail: this.decodeText,
-            cis: this.decodeText,
-            eworld: this.decodeText,
-            ibmmail: this.decodeText,
-            mcimail: this.decodeText,
-            powershare: this.decodeText,
-            prodigy: this.decodeText,
-            tlx: this.decodeText,
-            x400: this.decodeText
+            internet: this.decodeEmail,
+            aol: this.decodeEmail,
+            applelink: this.decodeEmail,
+            attmail: this.decodeEmail,
+            cis: this.decodeEmail,
+            eworld: this.decodeEmail,
+            ibmmail: this.decodeEmail,
+            mcimail: this.decodeEmail,
+            powershare: this.decodeEmail,
+            prodigy: this.decodeEmail,
+            tlx: this.decodeEmail,
+            x400: this.decodeEmail,
+            work: this.decodeEmail,
+            other: this.decodeEmail,
+            home: this.decodeEmail
         },
         mailer: this.decodeText,
         tz: this.decodeText,
@@ -611,14 +750,16 @@ var vCard = function() {
                 if (vcard3Struct[tagName] === undefined) {
                     throw "Undefined vcard tag: " + row.name;
                 }
-
+                if (tagName === 'email') {
+                    debugger;
+                }
                 if (typeof vcard3Struct[tagName] == "object") {
                     // We are parsing a tag that has parameters
 
                     // Cycle through the parameters
                     for (var par = 0; par < row.params.length; par++) {
 
-                        var paramName = row.params[par][tagName==='adr' || tagName==='tel' ? 'value' : 'name'].toLowerCase();
+                        var paramName = row.params[par].value.toLowerCase();
                         if (typeof vcard3Struct[tagName][paramName] == "function") {
                             if (ret[tagName] === undefined) {
                                 ret[tagName] = {};
