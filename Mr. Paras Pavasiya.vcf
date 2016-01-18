@@ -5,12 +5,32 @@ N:Pavasiya;Paras;;Mr.;
 FN:Mr. Paras Pavasiya
 ORG:AvantsoftIndia;
 TITLE:Jr. Software Developer
-EMAIL;type=INTERNET;type=WORK;type=pref:paras.avantsoft@gmail.com
-item1.EMAIL;type=INTERNET:email@gmail.com
-item1.X-ABLabel:email-clickurl
-TEL;type=WORK;type=VOICE;type=pref:7405738880
-ADR;type=WORK;type=pref:;;A/413\, Atma House\\n0pp. OLD RBI \\nAshram road;Ahmedabad;Gujarat;380006;India
-URL;type=WORK;type=pref:http://companywebsite.com
-UID:123d5bb6-fb7f-45e0-ba3f-0d482eb35ab5
-X-ABUID:123D5BB6-FB7F-45E0-BA3F-0D482EB35AB5:ABPerson
+EMAIL;type=WORK;type=pref:paras.avantsoft@gmail.com
+TEL;type=work;type=VOICE;type=pref:7405738880
+ADR;type=work:A/413\, Atma House\\n0pp. OLD RBI \\nAshram road;Ahmedabad;Gujarat;380006;India
+URL;type=full_name;type=pref:https://companywebsite.com
+URL;type=company_mail;type=pref:email@gmail.com
+URL;type=company_video;type=pref:https://www.youtube.com/playlist?list=pl0z67tlytawpkl4esyp7tndjyn547rtni
+URL;type=company_message;type=pref:https://companywebsite.com
+URL;type=company_name;type=pref:https://companywebsite.com
+URL;type=company_logo;type=pref:https://companywebsite.com
+URL;type=company_web;type=pref:https://companywebsite.com
+URL;type=company_map;type=pref:https://companywebsite.com
+URL;type=photo_album;type=pref:https://companywebsite.com
+URL;type=social_facebook;type=pref:https://companywebsite.com
+URL;type=social_twitter;type=pref:https://companywebsite.com
+URL;type=social_linkedin;type=pref:https://companywebsite.com
+URL;type=social_gplus;type=pref:https://companywebsite.com
+URL;type=social_pineterest;type=pref:https://companywebsite.com
+URL;type=social_tumblr;type=pref:https://companywebsite.com
+URL;type=social_web;type=pref:https://companywebsite.com
+URL;type=company_audio;type=pref:https://companywebsite.com
+URL;type=company_pdf;type=pref:https://companywebsite.com
+URL;type=company_video_apath;type=pref:https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png
+URL;type=company_message_apath;type=pref:https://dev.ipluscards.com:8000/animation/dev/system/assets/fonts/Slackey.ttf
+URL;type=company_logo_apath;type=pref:https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png
+URL;type=photo_album_apath1;type=pref:https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png
+URL;type=photo_album_apath2;type=pref:https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449725086399-_ScreenShot2015-12-03at35710pm.png
+URL;type=user_photo_apath;type=pref:https://ipluscards.com/user/546c243dd4f2c100009a7e8e/1449171108739-hdpi.png
+PHOTO;VALUE=URL;TYPE=JPEG:httpss://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png
 END:VCARD

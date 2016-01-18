@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <input type="file" id="myFile" onChange="handleLoad(this);">
+    <input type="file" id="myFile" onChange="handleLoad(this);"><br><br>
+    <a download="info.vcf" id="downloadlink">Download VCF</a>
     <script type="text/javascript">
         var vcard = new vCard();
 

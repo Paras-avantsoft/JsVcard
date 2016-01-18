@@ -69,101 +69,163 @@ var vCard = function() {
     this.parsevCardData = function(data) {
         var cardData = self.parsevCard(self.parseDirectoryMimeType(data)),
             workAdr = cardData.adr.work,
+            cUrl = cardData.url,
             userAdr = workAdr.street+", "+workAdr.location+", "+workAdr.region+"-"+workAdr.postalcode,
             userConfig = {
-                "userId": cardData.email.work,
-                "config": {
-                    "full_name": {
-                        "text": cardData.fn,
-                        "clickUrl": "http://website.com"
-                    },
-                    "company_mail": {
-                        "clickUrl": "email@gmail.com",
-                        "text": cardData.email.work
-                    },
-                    "company_video": {
-                        "clickUrl": "https://www.youtube.com/playlist?list=pl0z67tlytawpkl4esyp7tndjyn547rtni",
-                        "activeDisplayType": "image",
+                "full_name": {
+                    "text": cardData.fn
+                    // "clickUrl": cUrl.full_name
+                },
+                "company_mail": {
+                    // "clickUrl": cUrl.company_mail,
+                    "text": cardData.email.work
+                },
+                "company_video": {
+                    "clickUrl": cUrl.company_video
+                    // "activeDisplayType": "image",
+                    // "type": "absolute",
+                    // "absolutePath": cUrl.company_video_apath
+                },
+                "company_message": {
+                    "text": "company tag line or \nsome multi line message"
+                    // "clickUrl": cUrl.company_message,
+                    // "fontFamily": "Slackey",
+                    // "absoluteFontPath": cUrl.company_message_apath
+                },
+                "job_title": {
+                    "text": cardData.title
+                },
+                "company_name": {
+                    // "clickUrl": cUrl.company_name,
+                    "text": cardData.org
+                },
+                "company_logo": {
+                    // "clickUrl": cUrl.company_logo,
+                    "activeDisplayType": "image",
+                    "type": "absolute",
+                    "absolutePath": cUrl.company_logo_apath
+                },
+                "company_web": {
+                    "clickUrl": cUrl.company_web
+                },
+                "company_phone": {
+                    // "vType": "phone",
+                    "clickUrl": cardData.tel.work
+                },
+                "company_map": {
+                    "text": userAdr
+                    // "clickUrl": [{
+                    //     "url": cUrl.company_map
+                    // }]
+                },
+                "photo_album": {
+                    // "clickUrl": cUrl.photo_album,
+                    "images": [{
                         "type": "absolute",
-                        "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
-                    },
-                    "company_message": {
-                        "text": "company tag line or \nsome multi line message",
-                        "clickUrl": "",
-                        "fontFamily": "Slackey",
-                        "absoluteFontPath": "https://dev.ipluscards.com:8000/animation/dev/system/assets/fonts/Slackey.ttf"
-                    },
-                    "job_title": {
-                        "text": cardData.title
-                    },
-                    "company_name": {
-                        "clickUrl": "http://companywebsite.com",
-                        "text": cardData.org
-                    },
-                    "company_logo": {
-                        "clickUrl": "http://companywebsite.com",
-                        "activeDisplayType": "image",
+                        "filename": "",
+                        "absolutePath": cUrl.photo_album_apath1
+                    }, {
                         "type": "absolute",
-                        "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
-                    },
-                    "company_web": {
-                        "clickUrl": cardData.url
-                    },
-                    "company_phone": {
-                        "vType": "phone",
-                        "clickUrl": cardData.tel.work
-                    },
-                    "company_map": {
-                        "text": userAdr,
-                        "clickUrl": [{
-                            "url": ""
-                        }]
-                    },
-                    "photo_album": {
-                        "clickUrl": "",
-                        "images": [{
-                            "type": "absolute",
-                            "filename": "",
-                            "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
-                        }, {
-                            "type": "absolute",
-                            "filename": "",
-                            "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449725086399-_ScreenShot2015-12-03at35710pmpng"
-                        }]
-                    },
-                    "social_facebook": {
-                        "clickUrl": "http://facebook.com/username"
-                    },
-                    "social_twitter": {
-                        "clickUrl": "http://twitter.com/username"
-                    },
-                    "social_gplus": {
-                        "clickUrl": "http://plus.google.com/username"
-                    },
-                    "social_linkedin": {
-                        "clickUrl": "http://linkedin.com/username"
-                    },
-                    "social_pineterest": {
-                        "clickUrl": "http://pinterest.com/username"
-                    },
-                    "social_tumblr": {
-                        "clickUrl": "http://tumblr.com/username"
-                    },
-                    "social_web": {
-                        "clickUrl": "http://yourweblink.com/"
-                    },
-                    "company_audio": {
-                        "clickUrl": "http://yourlinkaudiolink.com/",
-                        "activeDisplayType": "image"
-                    },
-                    "company_pdf": {
-                        "clickUrl": "http://yourpdflink.com/"
-                    }
+                        "filename": "",
+                        "absolutePath": cUrl.photo_album_apath1
+                    }]
+                },
+                "social_facebook": {
+                    "clickUrl": cUrl.social_facebook
+                },
+                "social_twitter": {
+                    "clickUrl": cUrl.social_twitter
+                },
+                "social_gplus": {
+                    "clickUrl": cUrl.social_gplus
+                },
+                "social_linkedin": {
+                    "clickUrl": cUrl.social_linkedin
+                },
+                "social_pineterest": {
+                    "clickUrl": cUrl.social_pineterest
+                },
+                "social_tumblr": {
+                    "clickUrl": cUrl.social_tumblr
+                },
+                "social_web": {
+                    "clickUrl": cUrl.social_web
+                },
+                "company_audio": {
+                    "clickUrl": cUrl.company_audio
+                    // "activeDisplayType": "image"
+                },
+                "company_pdf": {
+                    "clickUrl": cUrl.company_pdf
+                },
+                "user_photo": {
+                    "absolutePath": cardData.photo,
+                    "activeDisplayType": "image",
+                    // "clickUrl": cardData.photo,
+                    "type": "absolute"
                 }
             };
-
+            debugger;
+        this.createVCardFile(userConfig);
         return userConfig;
     };
+
+    this.createVCardFile = function(vCard) {
+        var config = vCard,
+            lb = "\r\n",
+            vCardText,
+            textFile = null,
+            data;
+
+        vCardText = "BEGIN:VCARD"+lb+
+                    "VERSION:3.0"+lb+
+                    "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN"+lb+
+                    "N:"+config.full_name.text+lb+
+                    "FN:"+ config.full_name.text +lb+
+                    "ORG:"+ config.company_name.text +lb+
+                    "TITLE:"+ config.job_title.text +lb+
+                    "EMAIL;type=WORK:"+ config.company_mail.text +lb+
+                    "TEL;type=work;type=VOICE;type=pref:"+ config.company_phone.clickUrl +lb+
+                    "ADR;type=work;type=pref:"+ config.company_map.text +lb+
+                    // "URL;type=full_name;type=pref:"+ config.full_name.clickUrl +lb+
+                    // "URL;type=company_mail;type=pref:"+ config.company_mail.clickUrl+lb+
+                    "URL;type=company_video;type=pref:"+ config.company_video.clickUrl+lb+
+                    // "URL;type=company_message;type=pref:"+ config.company_message.clickUrl+lb+
+                    // "URL;type=company_name;type=pref:"+ config.company_name.clickUrl+lb+
+                    // "URL;type=company_logo;type=pref:"+ config.company_logo.clickUrl+lb+
+                    "URL;type=company_web;type=pref:"+ config.company_web.clickUrl+lb+
+                    // "URL;type=company_map;type=pref:"+ config.company_map.clickUrl.url+lb+
+                    // "URL;type=photo_album;type=pref:"+ config.photo_album.clickUrl+lb+
+                    "URL;type=social_facebook;type=pref:"+ config.social_facebook.clickUrl+lb+
+                    "URL;type=social_twitter;type=pref:"+ config.social_twitter.clickUrl+lb+
+                    "URL;type=social_gplus;type=pref:"+ config.social_gplus.clickUrl+lb+
+                    "URL;type=social_pineterest;type=pref:"+ config.social_pineterest.clickUrl+lb+
+                    "URL;type=social_tumblr;type=pref:"+ config.social_tumblr.clickUrl+lb+
+                    "URL;type=social_web;type=pref:"+ config.social_web.clickUrl+lb+
+                    "URL;type=company_audio;type=pref:"+ config.company_audio.clickUrl+lb+
+                    "URL;type=company_pdf;type=pref:"+ config.company_pdf.clickUrl+lb+
+                    // "URL;type=company_video_apath;type=pref:"+ config.company_video.absolutePath+lb+
+                    // "URL;type=company_message_apath;type=pref:"+ config.company_message.absolutePath+lb+
+                    "URL;type=company_logo_apath;type=pref:"+ config.company_logo.absolutePath+lb+
+                    "URL;type=photo_album_apath1;type=pref:"+ config.photo_album.images[0].absolutePath+lb+
+                    "URL;type=photo_album_apath2;type=pref:"+ config.photo_album.images[1].absolutePath+lb+
+                    "URL;type=user_photo_apath;type=pref:"+ config.user_photo.absolutePath+lb+
+                    "PHOTO;VALUE=URL;TYPE=PNG:"+ config.user_photo.absolutePath +lb+
+                    "END:VCARD";
+
+        data = new Blob([vCardText], {type: "text/vcard"});
+        // If we are replacing a previously generated file we need to
+        // manually revoke the object URL to avoid memory leaks.
+        if (textFile !== null) {
+          window.URL.revokeObjectURL(textFile);
+        }
+
+        textFile = window.URL.createObjectURL(data);
+
+        var link = document.getElementById("downloadlink");
+        link.href = textFile;
+    };
+
 
     /**
      * Parses a single content line as described in RFC2425
@@ -670,7 +732,8 @@ var vCard = function() {
             x400: this.decodeEmail,
             work: this.decodeEmail,
             other: this.decodeEmail,
-            home: this.decodeEmail
+            home: this.decodeEmail,
+            "company_mail": this.decodeEmail
         },
         mailer: this.decodeText,
         tz: this.decodeText,
@@ -682,13 +745,39 @@ var vCard = function() {
         org: this.decodeText,
         note: this.decodeText,
         rev: this.decodeText,
-        'sort-string': this.decodeText,
+        "sort-string": this.decodeText,
         sound: {
             wave: this.decodeText,
             pcm: this.decodeText,
             aiff: this.decodeText
         },
-        url: this.decodeText,
+        url: {
+            "full_name": this.decodeText,
+            "company_mail": this.decodeText,
+            "company_video": this.decodeText,
+            "company_message": this.decodeText,
+            "company_name": this.decodeText,
+            "company_logo": this.decodeText,
+            "company_web": this.decodeText,
+            "company_phone": this.decodeText,
+            "company_map": this.decodeText,
+            "photo_album": this.decodeText,
+            "social_facebook": this.decodeText,
+            "social_twitter": this.decodeText,
+            "social_gplus": this.decodeText,
+            "social_linkedin": this.decodeText,
+            "social_pineterest": this.decodeText,
+            "social_tumblr": this.decodeText,
+            "social_web": this.decodeText,
+            "company_audio": this.decodeText,
+            "company_pdf": this.decodeText,
+            "company_video_apath": this.decodeText,
+            "company_message_apath": this.decodeText,
+            "company_logo_apath": this.decodeText,
+            "photo_album_apath1": this.decodeText,
+            "photo_album_apath2": this.decodeText,
+            "user_photo_apath": this.decodeText
+        },
         uid: this.decodeText,
         key: {
             pgp: this.decodeText,
