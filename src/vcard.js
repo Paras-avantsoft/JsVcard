@@ -165,7 +165,7 @@ var vCard = function() {
                     "type": "absolute"
                 }
             };
-            debugger;
+
         this.createVCardFile(userConfig);
         return userConfig;
     };
@@ -180,37 +180,37 @@ var vCard = function() {
         vCardText = "BEGIN:VCARD"+lb+
                     "VERSION:3.0"+lb+
                     "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN"+lb+
-                    "N:"+config.full_name.text+lb+
-                    "FN:"+ config.full_name.text +lb+
-                    "ORG:"+ config.company_name.text +lb+
-                    "TITLE:"+ config.job_title.text +lb+
-                    "EMAIL;type=WORK:"+ config.company_mail.text +lb+
-                    "TEL;type=work;type=VOICE;type=pref:"+ config.company_phone.clickUrl +lb+
-                    "ADR;type=work;type=pref:"+ config.company_map.text +lb+
+                    "N:"+ (config.full_name && config.full_name.text)+lb+
+                    "FN:"+ (config.full_name && config.full_name.text) +lb+
+                    "ORG:"+ (config.company_name && config.company_name.text) +lb+
+                    "TITLE:"+ (config.job_title && config.job_title.text) +lb+
+                    "EMAIL;type=WORK:"+ (config.company_mail && config.company_mail.text) +lb+
+                    "TEL;type=work;type=VOICE;type=pref:"+ (config.company_phone && config.company_phone.clickUrl) +lb+
+                    "ADR;type=work;type=pref:"+ (config.company_map && config.company_map.text) +lb+
                     // "URL;type=full_name;type=pref:"+ config.full_name.clickUrl +lb+
                     // "URL;type=company_mail;type=pref:"+ config.company_mail.clickUrl+lb+
-                    "URL;type=company_video;type=pref:"+ config.company_video.clickUrl+lb+
+                    "URL;type=company_video;type=pref:"+ (config.company_video && config.company_video.clickUrl)+lb+
                     // "URL;type=company_message;type=pref:"+ config.company_message.clickUrl+lb+
                     // "URL;type=company_name;type=pref:"+ config.company_name.clickUrl+lb+
                     // "URL;type=company_logo;type=pref:"+ config.company_logo.clickUrl+lb+
-                    "URL;type=company_web;type=pref:"+ config.company_web.clickUrl+lb+
+                    "URL;type=company_web;type=pref:"+ (config.company_web && config.company_web.clickUrl)+lb+
                     // "URL;type=company_map;type=pref:"+ config.company_map.clickUrl.url+lb+
                     // "URL;type=photo_album;type=pref:"+ config.photo_album.clickUrl+lb+
-                    "URL;type=social_facebook;type=pref:"+ config.social_facebook.clickUrl+lb+
-                    "URL;type=social_twitter;type=pref:"+ config.social_twitter.clickUrl+lb+
-                    "URL;type=social_gplus;type=pref:"+ config.social_gplus.clickUrl+lb+
-                    "URL;type=social_pineterest;type=pref:"+ config.social_pineterest.clickUrl+lb+
-                    "URL;type=social_tumblr;type=pref:"+ config.social_tumblr.clickUrl+lb+
-                    "URL;type=social_web;type=pref:"+ config.social_web.clickUrl+lb+
-                    "URL;type=company_audio;type=pref:"+ config.company_audio.clickUrl+lb+
-                    "URL;type=company_pdf;type=pref:"+ config.company_pdf.clickUrl+lb+
+                    "URL;type=social_facebook;type=pref:"+ (config.social_facebook && config.social_facebook.clickUrl)+lb+
+                    "URL;type=social_twitter;type=pref:"+ (config.social_twitter && config.social_twitter.clickUrl)+lb+
+                    "URL;type=social_gplus;type=pref:"+ (config.social_gplus && config.social_gplus.clickUrl)+lb+
+                    "URL;type=social_pineterest;type=pref:"+ (config.social_pineterest && config.social_pineterest.clickUrl)+lb+
+                    "URL;type=social_tumblr;type=pref:"+ (config.social_tumblr && config.social_tumblr.clickUrl)+lb+
+                    "URL;type=social_web;type=pref:"+ (config.social_web && config.social_web.clickUrl)+lb+
+                    "URL;type=company_audio;type=pref:"+ (config.company_audio && config.company_audio.clickUrl)+lb+
+                    "URL;type=company_pdf;type=pref:"+ (config.company_pdf && config.company_pdf.clickUrl)+lb+
                     // "URL;type=company_video_apath;type=pref:"+ config.company_video.absolutePath+lb+
                     // "URL;type=company_message_apath;type=pref:"+ config.company_message.absolutePath+lb+
-                    "URL;type=company_logo_apath;type=pref:"+ config.company_logo.absolutePath+lb+
-                    "URL;type=photo_album_apath1;type=pref:"+ config.photo_album.images[0].absolutePath+lb+
-                    "URL;type=photo_album_apath2;type=pref:"+ config.photo_album.images[1].absolutePath+lb+
-                    "URL;type=user_photo_apath;type=pref:"+ config.user_photo.absolutePath+lb+
-                    "PHOTO;VALUE=URL;TYPE=PNG:"+ config.user_photo.absolutePath +lb+
+                    "URL;type=company_logo_apath;type=pref:"+ (config.company_logo && config.company_logo.absolutePath)+lb+
+                    "URL;type=photo_album_apath1;type=pref:"+ (config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath)+lb+
+                    "URL;type=photo_album_apath2;type=pref:"+ (config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath)+lb+
+                    "URL;type=user_photo_apath;type=pref:"+ (config.user_photo && config.user_photo.absolutePath)+lb+
+                    "PHOTO;VALUE=URL;TYPE=PNG:"+ (config.user_photo && config.user_photo.absolutePath) +lb+
                     "END:VCARD";
 
         data = new Blob([vCardText], {type: "text/vcard"});
