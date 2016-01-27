@@ -50,22 +50,43 @@ var vCard = function() {
         }
     };
 
-    this.downloadIpcVcard = function() {
-        var xhttp = new XMLHttpRequest();
+    this.downloadIpcVcard = function(vCard) {
+        var xhttp = new XMLHttpRequest(),
+            vCardData = this.convertJsonToVCF(vCard),
+            vcardObj = {
+                vcfname: vCard.full_name.text || 'ipcvcard',
+                data: vCardData
+            };
+
         xhttp.open('POST', "http://192.168.2.3:4786/config", true);
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState == XMLHttpRequest.DONE) {
-                alert(xhttp.responseText);
-
                 // TODO: Temporary code, for DEV mode
                 var link = document.getElementById("downloadfromserver");
                 link.href = '../' + xhttp.responseText;
             }
-
         };
-        xhttp.send(this.convertJsonToVCF());
-
+        xhttp.send(JSON.stringify(vcardObj));
     };
+
+    this.createVCardFile = function(vCard) {
+        var vCardText = this.convertJsonToVCF(vCard),
+            textFile = null,
+            data;
+
+        data = new Blob([vCardText], {type: "text/vcard"});
+        // If we are replacing a previously generated file we need to
+        // manually revoke the object URL to avoid memory leaks.
+        if (textFile !== null) {
+          window.URL.revokeObjectURL(textFile);
+        }
+
+        textFile = window.URL.createObjectURL(data);
+
+        var link = document.getElementById("downloadlink");
+        link.href = textFile;
+    };
+
 
     /*
      * Loads the vCard from a file using the File API (checked before calling)
@@ -219,7 +240,7 @@ var vCard = function() {
                             "clickUrl": "9876543211"
                         },
                         "company_map": {
-                            "text": "A/413, Atma House Opp. OLD RBI, Asharam road, Ahmedabad Gujarat - 380006"
+                            "text": "A/413, Atma House\nOpp. OLD RBI\nAsharam road\nAhmedabad Gujarat - 380006"
                         },
                         "photo_album": {
                             "images": [{
@@ -276,7 +297,7 @@ var vCard = function() {
                     "TITLE:"+ (config.job_title && config.job_title.text) +lb+
                     "EMAIL;type=WORK:"+ (config.company_mail && config.company_mail.text) +lb+
                     "TEL;type=work;type=VOICE;type=pref:"+ (config.company_phone && config.company_phone.clickUrl) +lb+
-                    "ADR;type=work;type=pref:"+ (config.company_map && config.company_map.text) +lb+
+                    "ADR;type=work;type=pref:"+ (config.company_map && config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')) +lb+
                     // "URL;type=full_name;type=pref:"+ config.full_name.clickUrl +lb+
                     // "URL;type=company_mail;type=pref:"+ config.company_mail.clickUrl+lb+
                     "URL;type=company_video;type=pref:"+ (config.company_video && config.company_video.clickUrl)+lb+
@@ -305,25 +326,6 @@ var vCard = function() {
 
         return vCardText;
     };
-
-    this.createVCardFile = function(vCard) {
-        var vCardText = this.convertJsonToVCF(vCard),
-            textFile = null,
-            data;
-
-        data = new Blob([vCardText], {type: "text/vcard"});
-        // If we are replacing a previously generated file we need to
-        // manually revoke the object URL to avoid memory leaks.
-        if (textFile !== null) {
-          window.URL.revokeObjectURL(textFile);
-        }
-
-        textFile = window.URL.createObjectURL(data);
-
-        var link = document.getElementById("downloadlink");
-        link.href = textFile;
-    };
-
 
     /**
      * Parses a single content line as described in RFC2425
