@@ -50,6 +50,23 @@ var vCard = function() {
         }
     };
 
+    this.downloadIpcVcard = function() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open('POST', "http://192.168.2.3:4786/config", true);
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == XMLHttpRequest.DONE) {
+                alert(xhttp.responseText);
+
+                // TODO: Temporary code, for DEV mode
+                var link = document.getElementById("downloadfromserver");
+                link.href = '../' + xhttp.responseText;
+            }
+
+        };
+        xhttp.send(this.convertJsonToVCF());
+
+    };
+
     /*
      * Loads the vCard from a file using the File API (checked before calling)
      * file - a File object that represents the selected file to load
@@ -170,12 +187,85 @@ var vCard = function() {
         return userConfig;
     };
 
-    this.createVCardFile = function(vCard) {
-        var config = vCard,
-            lb = "\r\n",
-            vCardText,
-            textFile = null,
-            data;
+    this.convertJsonToVCF = function(vCard) {
+        var config = vCard || {
+                        "full_name": {
+                            "text": "user Name"
+                        },
+                        "company_mail": {
+                            "text": "chintan.avantsoft@gmail.com"
+                        },
+                        "company_video": {
+                            "clickUrl": "https://www.youtube.com/playlist?list=pl0z67tlytawpkl4esyp7tndjyn547rtni"
+                        },
+                        "company_message": {
+                            "text": "company tag line or \nsome multi line message"
+                        },
+                        "job_title": {
+                            "text": "job title"
+                        },
+                        "company_name": {
+                            "text": "company name"
+                        },
+                        "company_logo": {
+                            "activeDisplayType": "image",
+                            "type": "absolute",
+                            "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
+                        },
+                        "company_web": {
+                            "clickUrl": "http://companywebsite.com"
+                        },
+                        "company_phone": {
+                            "clickUrl": "9876543211"
+                        },
+                        "company_map": {
+                            "text": "A/413, Atma House Opp. OLD RBI, Asharam road, Ahmedabad Gujarat - 380006"
+                        },
+                        "photo_album": {
+                            "images": [{
+                                "type": "absolute",
+                                "filename": "1449831678550-64_icon_ipluscard.png",
+                                "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
+                            }, {
+                                "type": "absolute",
+                                "filename": "1449725086399-_ScreenShot2015-12-03at35710pm.png",
+                                "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449725086399-_ScreenShot2015-12-03at35710pm.png"
+                            }]
+                        },
+                        "social_facebook": {
+                            "clickUrl": "http://facebook.com/username"
+                        },
+                        "social_twitter": {
+                            "clickUrl": "http://twitter.com/username"
+                        },
+                        "social_gplus": {
+                            "clickUrl": "http://plus.google.com/username"
+                        },
+                        "social_linkedin": {
+                            "clickUrl": "http://linkedin.com/username"
+                        },
+                        "social_pineterest": {
+                            "clickUrl": "http://pinterest.com/username"
+                        },
+                        "social_tumblr": {
+                            "clickUrl": "http://tumblr.com/username"
+                        },
+                        "social_web": {
+                            "clickUrl": "http://yourweblink.com/"
+                        },
+                        "company_audio": {
+                            "clickUrl": "http://yourlinkaudiolink.com/"
+                        },
+                        "company_pdf": {
+                            "clickUrl": "http://yourpdflink.com/"
+                        },
+                        "user_photo": {
+                            "absolutePath": "https://ipluscards.com/user/546c243dd4f2c100009a7e8e/1449171108739-hdpi.png",
+                            "activeDisplayType": "image",
+                            "type": "absolute"
+                        }
+                    },
+            lb = "\r\n";
 
         vCardText = "BEGIN:VCARD"+lb+
                     "VERSION:3.0"+lb+
@@ -212,6 +302,14 @@ var vCard = function() {
                     "URL;type=user_photo_apath;type=pref:"+ (config.user_photo && config.user_photo.absolutePath)+lb+
                     "PHOTO;VALUE=URL;TYPE=PNG:"+ (config.user_photo && config.user_photo.absolutePath) +lb+
                     "END:VCARD";
+
+        return vCardText;
+    };
+
+    this.createVCardFile = function(vCard) {
+        var vCardText = this.convertJsonToVCF(vCard),
+            textFile = null,
+            data;
 
         data = new Blob([vCardText], {type: "text/vcard"});
         // If we are replacing a previously generated file we need to
