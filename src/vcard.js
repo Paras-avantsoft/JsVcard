@@ -4,26 +4,15 @@
 
 /**
  * vCard parser.
- * Uses Iconv library.
+ * Uses Iconv & Base64 library.
  * Requires JavaScript >= 1.6
  * @class vCard
  * @constructor
  */
+var Base64 = require('./Base64');
+var Iconv = require('./Iconv');
 var vCard = {
-    // var self = this;
-
     ready : false,
-
-    // if (!Array.indexOf) {
-    //     Array.prototype.indexOf = function(obj, start) {
-    //         for (var i = (start || 0); i < this.length; i++) {
-    //             if (this[i] == obj) {
-    //                 return i;
-    //             }
-    //         }
-    //         return -1;
-    //     };
-    // }
 
     /**
      * Handles the normal file loading
@@ -31,10 +20,10 @@ var vCard = {
      */
     handleLoad : function(evt) {
 
-        if (self.ready === true) {
+        if (this.ready === true) {
             this.ready = false;
-            console.log(self.ipcvcarddata);
-            return self.ipcvcarddata;
+            console.log(this.ipcvcarddata);
+            return this.ipcvcarddata;
         }
 
         if (!evt && this.ready === false) {
@@ -44,49 +33,49 @@ var vCard = {
         } else if (evt && this.ready === false) {
             var files = evt.files;
             if (files !== undefined && files[0] !== undefined) {
-                self.loadFromFile(files[0]);
+                this.loadFromFile(files[0]);
             }
             evt.value = "";
         }
     },
 
-    downloadIpcVcard : function(vCard) {
-        var xhttp = new XMLHttpRequest(),
-            vCardData = this.convertJsonToVCF(vCard),
-            vcardObj = {
-                vcfname: vCard.full_name.text || 'ipcvcard',
-                data: vCardData
-            };
+    // NOTE: No more in use
+    // downloadIpcVcard : function(vCard) {
+    //     var xhttp = new XMLHttpRequest(),
+    //         vCardData = this.convertJsonToVCF(vCard),
+    //         vcardObj = {
+    //             vcfname: vCard.full_name.text || 'ipcvcard',
+    //             data: vCardData
+    //         };
 
-        xhttp.open('POST', "http://192.168.2.3:4786/config", true);
-        xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == XMLHttpRequest.DONE) {
-                // TODO: Temporary code, for DEV mode
-                var link = document.getElementById("downloadfromserver");
-                link.href = '../' + xhttp.responseText;
-            }
-        };
-        xhttp.send(JSON.stringify(vcardObj));
-    },
+    //     xhttp.open('POST', "http://192.168.2.3:4786/config", true);
+    //     xhttp.onreadystatechange = function() {
+    //         if (xhttp.readyState == XMLHttpRequest.DONE) {
+    //             // TODO: Temporary code, for DEV mode
+    //             var link = document.getElementById("downloadfromserver");
+    //             link.href = '../' + xhttp.responseText;
+    //         }
+    //     };
+    //     xhttp.send(JSON.stringify(vcardObj));
+    // },
 
-    createVCardFile : function(vCard) {
-        var vCardText = this.convertJsonToVCF(vCard),
-            textFile = null,
-            data;
+    // createVCardFile : function(vCard) {
+    //     var vCardText = this.convertJsonToVCF(vCard),
+    //         textFile = null,
+    //         data;
 
-        data = new Blob([vCardText], {type: "text/vcard"});
-        // If we are replacing a previously generated file we need to
-        // manually revoke the object URL to avoid memory leaks.
-        if (textFile !== null) {
-          window.URL.revokeObjectURL(textFile);
-        }
+    //     data = new Blob([vCardText], {type: "text/vcard"});
+    //     // If we are replacing a previously generated file we need to
+    //     // manually revoke the object URL to avoid memory leaks.
+    //     if (textFile !== null) {
+    //       window.URL.revokeObjectURL(textFile);
+    //     }
 
-        textFile = window.URL.createObjectURL(data);
+    //     textFile = window.URL.createObjectURL(data);
 
-        var link = document.getElementById("downloadlink");
-        link.href = textFile;
-    },
-
+    //     var link = document.getElementById("downloadlink");
+    //     link.href = textFile;
+    // },
 
     /*
      * Loads the vCard from a file using the File API (checked before calling)
@@ -97,7 +86,7 @@ var vCard = {
             me = this;
 
         reader.onload = function(e) {
-            me.ipcvcarddata = self.parsevCardData(e.target.result);
+            me.ipcvcarddata = this.parsevCardData(e.target.result);
             me.ready = true;
         };
         me.handleLoad();
@@ -105,7 +94,7 @@ var vCard = {
     },
 
     parsevCardData : function(data) {
-        var cardData = self.parsevCard(self.parseDirectoryMimeType(data)),
+        var cardData = this.parsevCard(this.parseDirectoryMimeType(data)),
             workAdr = cardData.adr.work,
             cUrl = cardData.url,
             userAdr = workAdr.street+", "+workAdr.location+", "+workAdr.region+"-"+workAdr.postalcode,
@@ -208,121 +197,38 @@ var vCard = {
         return userConfig;
     },
 
-    convertJsonToVCF : function(vCard) {
-        var config = vCard || {
-                        "full_name": {
-                            "text": "user Name"
-                        },
-                        "company_mail": {
-                            "text": "chintan.avantsoft@gmail.com"
-                        },
-                        "company_video": {
-                            "clickUrl": "https://www.youtube.com/playlist?list=pl0z67tlytawpkl4esyp7tndjyn547rtni"
-                        },
-                        "company_message": {
-                            "text": "company tag line or \nsome multi line message"
-                        },
-                        "job_title": {
-                            "text": "job title"
-                        },
-                        "company_name": {
-                            "text": "company name"
-                        },
-                        "company_logo": {
-                            "activeDisplayType": "image",
-                            "type": "absolute",
-                            "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
-                        },
-                        "company_web": {
-                            "clickUrl": "http://companywebsite.com"
-                        },
-                        "company_phone": {
-                            "clickUrl": "9876543211"
-                        },
-                        "company_map": {
-                            "text": "A/413, Atma House\nOpp. OLD RBI\nAsharam road\nAhmedabad Gujarat - 380006"
-                        },
-                        "photo_album": {
-                            "images": [{
-                                "type": "absolute",
-                                "filename": "1449831678550-64_icon_ipluscard.png",
-                                "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
-                            }, {
-                                "type": "absolute",
-                                "filename": "1449725086399-_ScreenShot2015-12-03at35710pm.png",
-                                "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449725086399-_ScreenShot2015-12-03at35710pm.png"
-                            }]
-                        },
-                        "social_facebook": {
-                            "clickUrl": "http://facebook.com/username"
-                        },
-                        "social_twitter": {
-                            "clickUrl": "http://twitter.com/username"
-                        },
-                        "social_gplus": {
-                            "clickUrl": "http://plus.google.com/username"
-                        },
-                        "social_linkedin": {
-                            "clickUrl": "http://linkedin.com/username"
-                        },
-                        "social_pineterest": {
-                            "clickUrl": "http://pinterest.com/username"
-                        },
-                        "social_tumblr": {
-                            "clickUrl": "http://tumblr.com/username"
-                        },
-                        "social_web": {
-                            "clickUrl": "http://yourweblink.com/"
-                        },
-                        "company_audio": {
-                            "clickUrl": "http://yourlinkaudiolink.com/"
-                        },
-                        "company_pdf": {
-                            "clickUrl": "http://yourpdflink.com/"
-                        },
-                        "user_photo": {
-                            "absolutePath": "https://ipluscards.com/user/546c243dd4f2c100009a7e8e/1449171108739-hdpi.png",
-                            "activeDisplayType": "image",
-                            "type": "absolute"
-                        }
-                    },
-            lb = "\r\n";
+    convertJsonToVCF : function(config) {
+        var lb = "\r\n";
 
-        vCardText = "BEGIN:VCARD"+lb+
-                    "VERSION:3.0"+lb+
-                    "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN"+lb+
-                    "N:"+ (config.full_name && config.full_name.text)+lb+
-                    "FN:"+ (config.full_name && config.full_name.text) +lb+
-                    "ORG:"+ (config.company_name && config.company_name.text) +lb+
-                    "TITLE:"+ (config.job_title && config.job_title.text) +lb+
-                    "EMAIL;type=WORK:"+ (config.company_mail && config.company_mail.text) +lb+
-                    "TEL;type=work;type=VOICE;type=pref:"+ (config.company_phone && config.company_phone.clickUrl) +lb+
-                    "ADR;type=work;type=pref:"+ (config.company_map && config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')) +lb+
-                    // "URL;type=full_name;type=pref:"+ config.full_name.clickUrl +lb+
-                    // "URL;type=company_mail;type=pref:"+ config.company_mail.clickUrl+lb+
-                    "URL;type=company_video;type=pref:"+ (config.company_video && config.company_video.clickUrl)+lb+
-                    // "URL;type=company_message;type=pref:"+ config.company_message.clickUrl+lb+
-                    // "URL;type=company_name;type=pref:"+ config.company_name.clickUrl+lb+
-                    // "URL;type=company_logo;type=pref:"+ config.company_logo.clickUrl+lb+
-                    "URL;type=company_web;type=pref:"+ (config.company_web && config.company_web.clickUrl)+lb+
-                    // "URL;type=company_map;type=pref:"+ config.company_map.clickUrl.url+lb+
-                    // "URL;type=photo_album;type=pref:"+ config.photo_album.clickUrl+lb+
-                    "URL;type=social_facebook;type=pref:"+ (config.social_facebook && config.social_facebook.clickUrl)+lb+
-                    "URL;type=social_twitter;type=pref:"+ (config.social_twitter && config.social_twitter.clickUrl)+lb+
-                    "URL;type=social_gplus;type=pref:"+ (config.social_gplus && config.social_gplus.clickUrl)+lb+
-                    "URL;type=social_pineterest;type=pref:"+ (config.social_pineterest && config.social_pineterest.clickUrl)+lb+
-                    "URL;type=social_tumblr;type=pref:"+ (config.social_tumblr && config.social_tumblr.clickUrl)+lb+
-                    "URL;type=social_web;type=pref:"+ (config.social_web && config.social_web.clickUrl)+lb+
-                    "URL;type=company_audio;type=pref:"+ (config.company_audio && config.company_audio.clickUrl)+lb+
-                    "URL;type=company_pdf;type=pref:"+ (config.company_pdf && config.company_pdf.clickUrl)+lb+
-                    // "URL;type=company_video_apath;type=pref:"+ config.company_video.absolutePath+lb+
-                    // "URL;type=company_message_apath;type=pref:"+ config.company_message.absolutePath+lb+
-                    "URL;type=company_logo_apath;type=pref:"+ (config.company_logo && config.company_logo.absolutePath)+lb+
-                    "URL;type=photo_album_apath1;type=pref:"+ (config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath)+lb+
-                    "URL;type=photo_album_apath2;type=pref:"+ (config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath)+lb+
-                    "URL;type=user_photo_apath;type=pref:"+ (config.user_photo && config.user_photo.absolutePath)+lb+
-                    "PHOTO;VALUE=URL;TYPE=PNG:"+ (config.user_photo && config.user_photo.absolutePath) +lb+
-                    "END:VCARD";
+        if (!config) {
+            return 'no vcf data found';
+        }
+        vCardText = ["BEGIN:VCARD",
+                    "VERSION:3.0",
+                    "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
+                    "N:"+ (config.full_name && config.full_name.text),
+                    "FN:"+ (config.full_name && config.full_name.text) ,
+                    "ORG:"+ (config.company_name && config.company_name.text) ,
+                    "TITLE:"+ (config.job_title && config.job_title.text) ,
+                    "EMAIL;type=WORK:"+ (config.company_mail && config.company_mail.text) ,
+                    "TEL;type=work;type=VOICE;type=pref:"+ (config.company_phone && config.company_phone.clickUrl) ,
+                    "ADR;type=work;type=pref:"+ (config.company_map && config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')) ,
+                    "URL;type=company_video;type=pref:"+ (config.company_video && config.company_video.clickUrl),
+                    "URL;type=company_web;type=pref:"+ (config.company_web && config.company_web.clickUrl),
+                    "URL;type=social_facebook;type=pref:"+ (config.social_facebook && config.social_facebook.clickUrl),
+                    "URL;type=social_twitter;type=pref:"+ (config.social_twitter && config.social_twitter.clickUrl),
+                    "URL;type=social_gplus;type=pref:"+ (config.social_gplus && config.social_gplus.clickUrl),
+                    "URL;type=social_pineterest;type=pref:"+ (config.social_pineterest && config.social_pineterest.clickUrl),
+                    "URL;type=social_tumblr;type=pref:"+ (config.social_tumblr && config.social_tumblr.clickUrl),
+                    "URL;type=social_web;type=pref:"+ (config.social_web && config.social_web.clickUrl),
+                    "URL;type=company_audio;type=pref:"+ (config.company_audio && config.company_audio.clickUrl),
+                    "URL;type=company_pdf;type=pref:"+ (config.company_pdf && config.company_pdf.clickUrl),
+                    "URL;type=company_logo_apath;type=pref:"+ (config.company_logo && config.company_logo.absolutePath),
+                    "URL;type=photo_album_apath1;type=pref:"+ (config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath),
+                    "URL;type=photo_album_apath2;type=pref:"+ (config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath),
+                    "URL;type=user_photo_apath;type=pref:"+ (config.user_photo && config.user_photo.absolutePath),
+                    "PHOTO;VALUE=URL;TYPE=PNG:"+ (config.user_photo && config.user_photo.absolutePath) ,
+                    "END:VCARD"].join(lb);
 
         return vCardText;
     },
@@ -512,13 +418,13 @@ var vCard = {
     decodeText : function(x) {
         // Default encoding
         var encoding = "7bit";
-        var ind = self.findElement(x.params, 'encoding');
+        var ind = this.findElement(x.params, 'encoding');
         if (ind != -1) {
             encoding = x.params[ind].value.toLowerCase();
         }
 
         var charset = "ascii";
-        ind = self.findElement(x.params, 'charset');
+        ind = this.findElement(x.params, 'charset');
         if (ind != -1) {
             charset = x.params[ind].value.toLowerCase();
         }
@@ -530,7 +436,7 @@ var vCard = {
                 binary_value = Base64.decode(x.value).split('');
                 break;
             case "quoted-printable":
-                binary_value = self.decodeQuotedPrintable(x.value);
+                binary_value = this.decodeQuotedPrintable(x.value);
                 break;
             default: // 7bit or 8bit
                 binary_value = x.value.split('');
@@ -547,13 +453,13 @@ var vCard = {
     decodeEmail : function(x) {
         // Default encoding
         var encoding = "7bit";
-        var ind = self.findElement(x.params, 'encoding');
+        var ind = this.findElement(x.params, 'encoding');
         if (ind != -1) {
             encoding = x.params[ind].value.toLowerCase();
         }
 
         var charset = "ascii";
-        ind = self.findElement(x.params, 'charset');
+        ind = this.findElement(x.params, 'charset');
         if (ind != -1) {
             charset = x.params[ind].value.toLowerCase();
         }
@@ -565,7 +471,7 @@ var vCard = {
                 binary_value = Base64.decode(x.value).split('');
                 break;
             case "quoted-printable":
-                binary_value = self.decodeQuotedPrintable(x.value);
+                binary_value = this.decodeQuotedPrintable(x.value);
                 break;
             default: // 7bit or 8bit
                 binary_value = x.value.split('');
@@ -580,7 +486,7 @@ var vCard = {
     },
 
     decodeAdr : function(x) {
-        var value = self.decodeText(x);
+        var value = this.decodeText(x);
         var spladr = value.split(";");
         return {
             po: spladr[0],
@@ -594,7 +500,7 @@ var vCard = {
     },
 
     decodeN : function(x) {
-        var value = self.decodeText(x);
+        var value = this.decodeText(x);
         var spln = value.split(";");
         return {
             last: spln[0],
@@ -632,7 +538,7 @@ var vCard = {
      * @method decodeTel
      */
     decodeTel : function(x) {
-        var value = self.decodeText(x);
+        var value = this.decodeText(x);
         var matched = false;
         var ret = {};
         var set1 = ["voice", "fax", "modem", "isdn", "msg", "pref", "video"];
@@ -653,7 +559,7 @@ var vCard = {
     },
 
     decodeTelV3 : function(x) {
-        var value = self.decodeText(x);
+        var value = this.decodeText(x);
         var matched = false;
         var ret;
         var set1 = ["voice", "fax", "modem", "isdn", "msg", "pref", "video"];

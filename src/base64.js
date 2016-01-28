@@ -109,3 +109,5 @@ var Base64 = {
             return out;
         }
 };
+
+module.exports = Base64;

@@ -151,3 +151,4 @@ var Iconv = {
 		return ret.join('');
 	}
 };
+module.exports = Iconv;
