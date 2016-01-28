@@ -2,8 +2,10 @@ var http = require('http');
 var url = require('url');
 var fs = require('fs');
 var path = require('path');
+var vcard = require('./src/vCard');
 
 http.createServer(function(req, res) {
+    console.log(vcard.ready);
     if (req.url === '/config') {
         var body = "",
             vcfname = '';
