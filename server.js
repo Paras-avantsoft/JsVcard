@@ -6,6 +6,22 @@ var vcard = require('./src/vCard');
 
 http.createServer(function(req, res) {
     console.log(vcard.ready);
+
+    // >>>>>> On Server process <<<
+    // vcard.convertJsonToVCF(<config from PD>);
+    // create file on amazonS3 from the above converted string
+    // and get the url and send that url to client
+
+
+
+    // >>>>>> On local for testing <<<<<
+    // create dummy page that call /config url
+    // in the below code pass dummy object
+    // that should return the vcf compatible text
+    // we will create locally file and pass that url in request param
+    // on client html page we will change window.location in new tab with vcf url
+
+
     if (req.url === '/config') {
         var body = "",
             vcfname = '';
