@@ -9,27 +9,27 @@
  * @class vCard
  * @constructor
  */
-var vCard = function() {
-    var self = this;
+var vCard = {
+    // var self = this;
 
-    this.ready = false;
+    ready : false,
 
-    if (!Array.indexOf) {
-        Array.prototype.indexOf = function(obj, start) {
-            for (var i = (start || 0); i < this.length; i++) {
-                if (this[i] == obj) {
-                    return i;
-                }
-            }
-            return -1;
-        };
-    }
+    // if (!Array.indexOf) {
+    //     Array.prototype.indexOf = function(obj, start) {
+    //         for (var i = (start || 0); i < this.length; i++) {
+    //             if (this[i] == obj) {
+    //                 return i;
+    //             }
+    //         }
+    //         return -1;
+    //     };
+    // }
 
     /**
      * Handles the normal file loading
      * @method handleLoad
      */
-    this.handleLoad = function(evt) {
+    handleLoad : function(evt) {
 
         if (self.ready === true) {
             this.ready = false;
@@ -48,9 +48,9 @@ var vCard = function() {
             }
             evt.value = "";
         }
-    };
+    },
 
-    this.downloadIpcVcard = function(vCard) {
+    downloadIpcVcard : function(vCard) {
         var xhttp = new XMLHttpRequest(),
             vCardData = this.convertJsonToVCF(vCard),
             vcardObj = {
@@ -67,9 +67,9 @@ var vCard = function() {
             }
         };
         xhttp.send(JSON.stringify(vcardObj));
-    };
+    },
 
-    this.createVCardFile = function(vCard) {
+    createVCardFile : function(vCard) {
         var vCardText = this.convertJsonToVCF(vCard),
             textFile = null,
             data;
@@ -85,14 +85,14 @@ var vCard = function() {
 
         var link = document.getElementById("downloadlink");
         link.href = textFile;
-    };
+    },
 
 
     /*
      * Loads the vCard from a file using the File API (checked before calling)
      * file - a File object that represents the selected file to load
      */
-    this.loadFromFile = function(file) {
+    loadFromFile : function(file) {
         var reader = new FileReader(),
             me = this;
 
@@ -102,9 +102,9 @@ var vCard = function() {
         };
         me.handleLoad();
         reader.readAsBinaryString(file);
-    };
+    },
 
-    this.parsevCardData = function(data) {
+    parsevCardData : function(data) {
         var cardData = self.parsevCard(self.parseDirectoryMimeType(data)),
             workAdr = cardData.adr.work,
             cUrl = cardData.url,
@@ -206,9 +206,9 @@ var vCard = function() {
 
         this.createVCardFile(userConfig);
         return userConfig;
-    };
+    },
 
-    this.convertJsonToVCF = function(vCard) {
+    convertJsonToVCF : function(vCard) {
         var config = vCard || {
                         "full_name": {
                             "text": "user Name"
@@ -325,7 +325,7 @@ var vCard = function() {
                     "END:VCARD";
 
         return vCardText;
-    };
+    },
 
     /**
      * Parses a single content line as described in RFC2425
@@ -335,7 +335,7 @@ var vCard = function() {
      * @param {String} row unfolded content line
      * @return for each content line an object is returned (see return statement for the object structure)
      */
-    this.parseDirectoryMimeTypeRow = function(orig_row) {
+    parseDirectoryMimeTypeRow : function(orig_row) {
         var SAFE_CHAR_REGEXP_STR = '[\\x09\\x20\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x7E\\x80-\\xFF]';
         var QSAFE_CHAR_REGEXP_STR = '[\\x09\\x20\\x21\\x23-\\x7E\\x80-\\xFF]';
         var GROUP_REGEXP_STR = '[a-zA-Z0-9\\-]+';
@@ -419,14 +419,14 @@ var vCard = function() {
             name: name,
             value: value
         };
-    };
+    },
 
     /**
      * Based on RFC 2425
      * Parses a string of ASCII charachers in an object representing the directory entry.
      * @method parseDirectoryMimeType
      */
-    this.parseDirectoryMimeType = function(text) {
+    parseDirectoryMimeType : function(text) {
         var unfold = /\r\n(\t|\x20)/;
 
         // Perform unfolding
@@ -442,7 +442,7 @@ var vCard = function() {
             }
         }
         return parsed_rows;
-    };
+    },
 
     /**
      * Searches in data for the specified element. It works in a case insensitive manner.
@@ -452,7 +452,7 @@ var vCard = function() {
      * @param {String} elementValue optional. The element value to search for. If null we search forn null value. In not specified we don't search for a particular value.
      * @returns {Integer} the index in 'data' for the found element or -1 if not found.
      */
-    this.findElement = function(data, elementName, elementValue) {
+    findElement : function(data, elementName, elementValue) {
         var i = 0;
 
         if (elementValue === undefined) {
@@ -479,9 +479,9 @@ var vCard = function() {
         } else {
             return i;
         }
-    };
+    },
 
-    this.decodeQuotedPrintableHelper = function(str, prefix) {
+    decodeQuotedPrintableHelper : function(str, prefix) {
         var decoded_bytes = [];
         for (var i = 0; i < str.length;) {
             if (str.charAt(i) == prefix) {
@@ -493,13 +493,13 @@ var vCard = function() {
             }
         }
         return decoded_bytes;
-    };
+    },
 
     // "=E3=81=82=E3=81=84" => [ 0xE3, 0x81, 0x82, 0xE3, 0x81, 0x84 ]
-    this.decodeQuotedPrintable = function(str) {
+    decodeQuotedPrintable : function(str) {
         str = str.replace(/_/g, " "); // RFC 2047.
         return this.decodeQuotedPrintableHelper(str, "=");
-    };
+    },
 
     /**
      * Decodes the value of the element based on the "encoding" and "charset"
@@ -509,7 +509,7 @@ var vCard = function() {
      * @param {Object} x.value Contains the value
      * @returns {String} The decoded value
      */
-    this.decodeText = function(x) {
+    decodeText : function(x) {
         // Default encoding
         var encoding = "7bit";
         var ind = self.findElement(x.params, 'encoding');
@@ -542,9 +542,9 @@ var vCard = function() {
         }
 
         return Iconv.decode(binary_value, charset);
-    };
+    },
 
-    this.decodeEmail = function(x) {
+    decodeEmail : function(x) {
         // Default encoding
         var encoding = "7bit";
         var ind = self.findElement(x.params, 'encoding');
@@ -577,9 +577,9 @@ var vCard = function() {
         }
 
         return Iconv.decode(binary_value, charset);
-    };
+    },
 
-    this.decodeAdr = function(x) {
+    decodeAdr : function(x) {
         var value = self.decodeText(x);
         var spladr = value.split(";");
         return {
@@ -591,9 +591,9 @@ var vCard = function() {
             postalcode: spladr[5],
             country: spladr[6]
         };
-    };
+    },
 
-    this.decodeN = function(x) {
+    decodeN : function(x) {
         var value = self.decodeText(x);
         var spln = value.split(";");
         return {
@@ -603,7 +603,7 @@ var vCard = function() {
             prefix: spln[3],
             postfix: spln[4]
         };
-    };
+    },
 
     /**
      * To decode the Tel tag in vCard 2.1 we must separate two sets of parameters
@@ -615,7 +615,7 @@ var vCard = function() {
      * <br><br>
      * This could lead to correclty parse some strange pairs like PAGER;MODEM but this
      * system is the most flexible and meaningful (suggestions accepted here).
-     * 
+     *
      * examples:<br>
      * TEL;HOME;VOICE;FAX;MODEM:555-132 => this gets parsed 4 times.<br>
      * 1st (HOME) => {voice:"555-132", fax:"555-132", modem:"555-132"}<br>
@@ -631,7 +631,7 @@ var vCard = function() {
      * 5th (PREF) => {home:"1231231231", work:"1231231231"}<br>
      * @method decodeTel
      */
-    this.decodeTel = function(x) {
+    decodeTel : function(x) {
         var value = self.decodeText(x);
         var matched = false;
         var ret = {};
@@ -650,9 +650,9 @@ var vCard = function() {
             }
         }
         return ret;
-    };
+    },
 
-    this.decodeTelV3 = function(x) {
+    decodeTelV3 : function(x) {
         var value = self.decodeText(x);
         var matched = false;
         var ret;
@@ -671,11 +671,11 @@ var vCard = function() {
             }
         }
         return ret;
-    };
+    },
 
-    this.decodeNotSupported = function(val, params) {
+    decodeNotSupported : function(val, params) {
         console.log("This vCard element is currently not supported.");
-    };
+    },
 
     /**
      * This object defines the structure the vcard object will have.<br>
@@ -685,7 +685,7 @@ var vCard = function() {
      * For each match the leaf function gets called with the value as argument to get the right representation.<br>
      * @property vcard21Struct
      */
-    var vcard21Struct = {
+    vcard21Struct : {
         // Parse even those.
         begin: this.decodeText,
         end: this.decodeText,
@@ -764,9 +764,9 @@ var vCard = function() {
 
         // Non-standard?
         nickname: this.decodeText
-    };
+    },
 
-    var vcard3Struct = {
+    vcard3Struct : {
         begin: this.decodeText,
         end: this.decodeText,
         version: this.decodeText,
@@ -886,7 +886,7 @@ var vCard = function() {
         photo: this.decodeText,
         bday: this.decodeText,
         nickname: this.decodeText
-    };
+    },
 
     /**
      * RFC 2426<br>
@@ -900,7 +900,7 @@ var vCard = function() {
      * @param data an array of parsed contentlines
      * @return an object representing the parsed vcard content
      */
-    this.parsevCard = function(data) {
+    parsevCard : function(data) {
         var begin = 0,
             end = 0;
 
@@ -1030,5 +1030,6 @@ var vCard = function() {
         }
 
         return ret;
-    };
+    }
 };
+module.exports = vCard;
