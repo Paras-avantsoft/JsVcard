@@ -52,7 +52,7 @@ http.createServer(function(req, res) {
             res.setHeader('Access-Control-Allow-Methods', '*');
             res.setHeader('Access-Control-Allow-Headers', '*');
             res.setHeader('200',{"Content-Type":"text/vcard"});
-            res.write('');
+            res.write(vcfData);
             res.end();
         });
     }
