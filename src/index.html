@@ -23,7 +23,17 @@
     <a id="downloadfromserver" target="_blank">Download from server</a>
     <script type="text/javascript">
         function handleLoad(evt) {
-            // TODO: Add code to import vcf file
+            var xhttp = new XMLHttpRequest();
+            var fd = new FormData();
+            xhttp.open('POST', "http://192.168.2.8:4786/vcardimport", true);
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == XMLHttpRequest.DONE) {
+                    console.log(xhttp.responseText);
+                }
+            };
+            fd.append('vcf_file_import', evt.files[0]);
+            console.log(fd);
+            xhttp.send(fd);
         }
         function sendAjax() {
             var xhttp = new XMLHttpRequest();

@@ -5,19 +5,6 @@ var path = require('path');
 var vcard = require('./src/vCard');
 
 http.createServer(function(req, res) {
-    // >>>>>> On Server process <<<
-    // vcard.convertJsonToVCF(<config from PD>);
-    // create file on amazonS3 from the above converted string
-    // and get the url and send that url to client
-
-
-
-    // >>>>>> On local for testing <<<<<
-    // create dummy page that call /config url
-    // in the below code pass dummy object
-    // that should return the vcf compatible text
-    // we will create locally file and pass that url in request param
-    // on client html page we will change window.location in new tab with vcf url
     if (url.parse(req.url,true).pathname === '/configdata') {
         console.log("url >>>", req.url);
         var uId = url.parse(req.url,true).query.uId,
@@ -42,27 +29,30 @@ http.createServer(function(req, res) {
         res.end();
     }
 
-    if (req.url === '/config') {
-        var body = "",
-            vcfname = '';
-        console.log(req.url);
+    // xyz.substr(xyz.indexOf('BEGIN:vcard'), xyz.indexOf(END:vcard) + 9)
+
+    if (req.url === '/vcardimport') {
+        var body,
+            vcfData = '',
+            jsonData = {};
         req.on('data', function(chunk) {
             body += chunk;
         });
         req.on('end', function() {
-            console.log(body);
-            vcfname = JSON.parse(body).vcfname +'.vcf';
-            // res.writeHead('name', vcfname);
-            // var jsonObj = JSON.parse(body);
-            // console.log(jsonObj);
-            fs.writeFile(__dirname + '/' + vcfname, JSON.parse(body).data, function(err){
-                if (err) throw err;
-            });
+
+            var endString = (body.indexOf('END:VCARD')-165) + '';
+
+            vcfData = body.substr(body.indexOf('BEGIN:VCARD'), endString);
+
+            console.log(vcfData);
+
+            jsonData = vcard.handleLoad(vcfData);
+            console.log(jsonData);
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', '*');
             res.setHeader('Access-Control-Allow-Headers', '*');
             res.setHeader('200',{"Content-Type":"text/vcard"});
-            res.write(vcfname);
+            res.write('');
             res.end();
         });
     }
