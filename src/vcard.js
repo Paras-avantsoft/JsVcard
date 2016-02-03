@@ -145,25 +145,30 @@ var vCard = {
         return userConfig;
     },
 
-    convertJsonToVCF: function(config) {
-        var lb = "\r\n";
+    convertJsonToVCF: function(configs) {
+        console.log(configs);
+        var lb = "\r\n",
+            config = configs.viewCardPath ? configs.config : configs;
 
         if (!config) {
             return 'no vcf data found';
         }
-        var vCardText = ["BEGIN:VCARD",
+        var photoAlbum1 = config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath,
+            photoAlbum2 = config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath,
+            vCardText = ["BEGIN:VCARD",
             "VERSION:3.0",
             "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
             "N:" + (config.full_name && config.full_name.text),
             "FN:" + (config.full_name && config.full_name.text),
             "ORG:" + (config.company_name && config.company_name.text),
             "TITLE:" + (config.job_title && config.job_title.text),
-            "EMAIL;type=WORK:" + (config.company_mail && config.company_mail.text),
+            "EMAIL;type=WORK;type=pref:" + (config.company_mail && config.company_mail.text),
             "TEL;type=work;type=VOICE;type=pref:" + (config.company_phone && config.company_phone.clickUrl),
             "ADR;type=work;type=pref:" + (config.company_map && config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')),
             "URL;type=company_video;type=pref:" + (config.company_video && config.company_video.clickUrl),
             "URL;type=company_web;type=pref:" + (config.company_web && config.company_web.clickUrl),
             "URL;type=social_facebook;type=pref:" + (config.social_facebook && config.social_facebook.clickUrl),
+            "URL;type=social_linkedin;type=pref:" + (config.social_linkedin && config.social_linkedin.clickUrl),
             "URL;type=social_twitter;type=pref:" + (config.social_twitter && config.social_twitter.clickUrl),
             "URL;type=social_gplus;type=pref:" + (config.social_gplus && config.social_gplus.clickUrl),
             "URL;type=social_pineterest;type=pref:" + (config.social_pineterest && config.social_pineterest.clickUrl),
@@ -172,10 +177,12 @@ var vCard = {
             "URL;type=company_audio;type=pref:" + (config.company_audio && config.company_audio.clickUrl),
             "URL;type=company_pdf;type=pref:" + (config.company_pdf && config.company_pdf.clickUrl),
             "URL;type=company_logo_apath;type=pref:" + (config.company_logo && config.company_logo.absolutePath),
-            "URL;type=photo_album_apath1;type=pref:" + (config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath),
-            "URL;type=photo_album_apath2;type=pref:" + (config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath),
+            "URL;type=photo_album_apath1;type=pref:" + (photoAlbum1 || ''),
+            "URL;type=photo_album_apath2;type=pref:" + (photoAlbum1 || ''),
             "URL;type=user_photo_apath;type=pref:" + (config.user_photo && config.user_photo.absolutePath),
+            "URL;type=My up to date contact info;type=pref:" + (config.viewCardPath || ''),
             "PHOTO;VALUE=URL;TYPE=PNG:" + (config.user_photo && config.user_photo.absolutePath),
+            "NOTE:"+ (config.company_message && config.company_message.text.replace(/(?:\r\n|\r|\n)/g, ', ') || ''),
             "END:VCARD"
         ].join(lb);
 

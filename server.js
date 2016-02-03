@@ -9,19 +9,18 @@ http.createServer(function(req, res) {
     // VCF EXPORT
     if (url.parse(req.url,true).pathname === '/configdata') {
         console.log("url >>>", req.url);
-        var uId = url.parse(req.url,true).query.uId,
-            obj = '';
+        var uId = url.parse(req.url,true).query.uId;
 
         console.log("uId >>>", uId);
         console.log("exists >>>>", fs.existsSync("./src/vcard.json"));
         fs.readFile('./src/vcard.json', 'utf8', function (err, data) {
             if (err) throw err;
-            obj = JSON.parse(data);
-            console.log(obj);
-        });
-        var jsonData = vcard.convertJsonToVCF(obj);
-        fs.writeFile(__dirname + '/' + uId +'-myvcard.vcf', jsonData, function(err){
-            if (err) throw err;
+            var obj = JSON.parse(data);
+            var vcfData = vcard.convertJsonToVCF(obj);
+            console.log(vcfData);
+            fs.writeFile(__dirname + '/' + uId +'-myvcard.vcf', vcfData, function(err){
+                if (err) throw err;
+            });
         });
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', '*');

@@ -9,43 +9,46 @@
 <body>
     <h2>Import VCF</h2>
     <input type="file" id="myFile" onChange="handleLoad(this);">
-    <br><br>
+    <br>
+    <br>
     <textarea id="importVCF" style="height:200px;width:500px;" placeholder="Imported VCF file data will come here.."></textarea>
-    <br><br>
+    <br>
+    <br>
     <hr/>
     <h2>Export VCF</h2>
     <button onClick="sendAjax()">Send request to server</button>
-    <br><br>
-    If download not start automatically then click - <a id="downloadfromserver" target="_blank">Download from server</a>
+    <br>
+    <br> If download not start automatically then click - <a id="downloadfromserver" target="_blank">Download from server</a>
     <script type="text/javascript">
-        function handleLoad(evt) {
-            var xhttp = new XMLHttpRequest();
-            var fd = new FormData();
-            xhttp.open('POST', "http://192.168.2.8:4786/vcardimport", true);
-            xhttp.onreadystatechange = function() {
-                if (xhttp.readyState == XMLHttpRequest.DONE) {
-                    console.log(xhttp.responseText);
-                    document.getElementById('importVCF').value = xhttp.responseText;
-                }
-            };
-            fd.append('vcf_file_import', evt.files[0]);
-            console.log(fd);
-            xhttp.send(fd);
-        }
-        function sendAjax() {
-            var xhttp = new XMLHttpRequest();
+    function handleLoad(evt) {
+        var xhttp = new XMLHttpRequest();
+        var fd = new FormData();
+        xhttp.open('POST', "http://192.168.2.8:4786/vcardimport", true);
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == XMLHttpRequest.DONE) {
+                console.log(xhttp.responseText);
+                document.getElementById('importVCF').value = xhttp.responseText;
+            }
+        };
+        fd.append('vcf_file_import', evt.files[0]);
+        console.log(fd);
+        xhttp.send(fd);
+    }
 
-            xhttp.open('GET', "http://192.168.2.8:4786/configdata?uId=1453934202057", true);
-            xhttp.onreadystatechange = function() {
-                if (xhttp.readyState == XMLHttpRequest.DONE) {
-                    var link = document.getElementById("downloadfromserver");
-                    link.href = 'http://192.168.2.8/vcard/jsvcard/' + xhttp.responseText;
-                    link.setAttribute('download', xhttp.responseText);
-                    link.click();
-                }
-            };
-            xhttp.send();
-        }
+    function sendAjax() {
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.open('GET', "http://192.168.2.8:4786/configdata?uId=1453934202057", true);
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == XMLHttpRequest.DONE) {
+                var link = document.getElementById("downloadfromserver");
+                link.href = 'http://192.168.2.8/vcard/jsvcard/' + xhttp.responseText;
+                link.setAttribute('download', xhttp.responseText);
+                link.click();
+            }
+        };
+        xhttp.send();
+    }
     </script>
 </body>
 
