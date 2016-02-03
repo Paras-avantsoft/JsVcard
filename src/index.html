@@ -7,17 +7,13 @@
 </head>
 
 <body>
-    <!--
-     - download button
-     - that make ajax call to server with item id (string)
-     - once it get response from server
-     - open immidiately to new tab
-     - that will ask you to save the vcf file
-    -->
+    <h2>Import VCF</h2>
     <input type="file" id="myFile" onChange="handleLoad(this);">
     <br><br>
-    <a download="info.vcf" id="downloadlink">Download VCF</a>
-    <br><br><br><br>
+    <textarea id="importVCF" style="height:200px;width:500px;" placeholder="Imported VCF file data will come here.."></textarea>
+    <br><br>
+    <hr/>
+    <h2>Export VCF</h2>
     <button onClick="sendAjax()">Send request to server</button>
     <br><br>
     <a id="downloadfromserver" target="_blank">Download from server</a>
@@ -29,6 +25,7 @@
             xhttp.onreadystatechange = function() {
                 if (xhttp.readyState == XMLHttpRequest.DONE) {
                     console.log(xhttp.responseText);
+                    document.getElementById('importVCF').value = xhttp.responseText;
                 }
             };
             fd.append('vcf_file_import', evt.files[0]);

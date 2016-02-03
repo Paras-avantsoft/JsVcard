@@ -3,6 +3,7 @@
  */
 
 /**
+ * @author: Paras (Contr. Harshal)
  * vCard parser.
  * Uses Iconv & Base64 library.
  * Requires JavaScript >= 1.6
@@ -12,13 +13,13 @@
 var Base64 = require('./Base64');
 var Iconv = require('./Iconv');
 var vCard = {
-    ready : false,
+    ready: false,
 
     /**
      * Handles the normal file loading
      * @method handleLoad
      */
-    handleLoad : function(evt) {
+    handleLoad: function(evt) {
         if (typeof evt === 'string') {
             var jsonData = vCard.parsevCardData(evt);
             return jsonData;
@@ -43,49 +44,11 @@ var vCard = {
         }
     },
 
-    // NOTE: No more in use
-    // downloadIpcVcard : function(vCard) {
-    //     var xhttp = new XMLHttpRequest(),
-    //         vCardData = vCard.convertJsonToVCF(vCard),
-    //         vcardObj = {
-    //             vcfname: vCard.full_name.text || 'ipcvcard',
-    //             data: vCardData
-    //         };
-
-    //     xhttp.open('POST', "http://192.168.2.3:4786/config", true);
-    //     xhttp.onreadystatechange = function() {
-    //         if (xhttp.readyState == XMLHttpRequest.DONE) {
-    //             // TODO: Temporary code, for DEV mode
-    //             var link = document.getElementById("downloadfromserver");
-    //             link.href = '../' + xhttp.responseText;
-    //         }
-    //     };
-    //     xhttp.send(JSON.stringify(vcardObj));
-    // },
-
-    // createVCardFile : function(vCard) {
-    //     var vCardText = vCard.convertJsonToVCF(vCard),
-    //         textFile = null,
-    //         data;
-
-    //     data = new Blob([vCardText], {type: "text/vcard"});
-    //     // If we are replacing a previously generated file we need to
-    //     // manually revoke the object URL to avoid memory leaks.
-    //     if (textFile !== null) {
-    //       window.URL.revokeObjectURL(textFile);
-    //     }
-
-    //     textFile = window.URL.createObjectURL(data);
-
-    //     var link = document.getElementById("downloadlink");
-    //     link.href = textFile;
-    // },
-
     /*
      * Loads the vCard from a file using the File API (checked before calling)
      * file - a File object that represents the selected file to load
      */
-    loadFromFile : function(file) {
+    loadFromFile: function(file) {
         var reader = new FileReader(),
             me = vCard;
 
@@ -97,41 +60,31 @@ var vCard = {
         reader.readAsBinaryString(file);
     },
 
-    parsevCardData : function(data) {
+    parsevCardData: function(data) {
         var cardData = vCard.parsevCard(vCard.parseDirectoryMimeType(data)),
             workAdr = cardData.adr.work,
             cUrl = cardData.url,
-            userAdr = workAdr.street+", "+workAdr.location+", "+workAdr.region+"-"+workAdr.postalcode,
+            userAdr = workAdr.street + ", " + workAdr.location + ", " + workAdr.region + "-" + workAdr.postalcode,
             userConfig = {
                 "full_name": {
                     "text": cardData.fn
-                    // "clickUrl": cUrl.full_name
                 },
                 "company_mail": {
-                    // "clickUrl": cUrl.company_mail,
                     "text": cardData.email.work
                 },
                 "company_video": {
                     "clickUrl": cUrl.company_video
-                    // "activeDisplayType": "image",
-                    // "type": "absolute",
-                    // "absolutePath": cUrl.company_video_apath
                 },
                 "company_message": {
                     "text": "company tag line or \nsome multi line message"
-                    // "clickUrl": cUrl.company_message,
-                    // "fontFamily": "Slackey",
-                    // "absoluteFontPath": cUrl.company_message_apath
                 },
                 "job_title": {
                     "text": cardData.title
                 },
                 "company_name": {
-                    // "clickUrl": cUrl.company_name,
                     "text": cardData.org
                 },
                 "company_logo": {
-                    // "clickUrl": cUrl.company_logo,
                     "activeDisplayType": "image",
                     "type": "absolute",
                     "absolutePath": cUrl.company_logo_apath
@@ -140,17 +93,12 @@ var vCard = {
                     "clickUrl": cUrl.company_web
                 },
                 "company_phone": {
-                    // "vType": "phone",
                     "clickUrl": cardData.tel.work
                 },
                 "company_map": {
                     "text": userAdr
-                    // "clickUrl": [{
-                    //     "url": cUrl.company_map
-                    // }]
                 },
                 "photo_album": {
-                    // "clickUrl": cUrl.photo_album,
                     "images": [{
                         "type": "absolute",
                         "filename": "",
@@ -184,7 +132,6 @@ var vCard = {
                 },
                 "company_audio": {
                     "clickUrl": cUrl.company_audio
-                    // "activeDisplayType": "image"
                 },
                 "company_pdf": {
                     "clickUrl": cUrl.company_pdf
@@ -192,47 +139,45 @@ var vCard = {
                 "user_photo": {
                     "absolutePath": cardData.photo,
                     "activeDisplayType": "image",
-                    // "clickUrl": cardData.photo,
                     "type": "absolute"
                 }
             };
-
-        // vCard.createVCardFile(userConfig);
         return userConfig;
     },
 
-    convertJsonToVCF : function(config) {
+    convertJsonToVCF: function(config) {
         var lb = "\r\n";
 
         if (!config) {
             return 'no vcf data found';
         }
         vCardText = ["BEGIN:VCARD",
-                    "VERSION:3.0",
-                    "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
-                    "N:"+ (config.full_name && config.full_name.text),
-                    "FN:"+ (config.full_name && config.full_name.text) ,
-                    "ORG:"+ (config.company_name && config.company_name.text) ,
-                    "TITLE:"+ (config.job_title && config.job_title.text) ,
-                    "EMAIL;type=WORK:"+ (config.company_mail && config.company_mail.text) ,
-                    "TEL;type=work;type=VOICE;type=pref:"+ (config.company_phone && config.company_phone.clickUrl) ,
-                    "ADR;type=work;type=pref:"+ (config.company_map && config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')) ,
-                    "URL;type=company_video;type=pref:"+ (config.company_video && config.company_video.clickUrl),
-                    "URL;type=company_web;type=pref:"+ (config.company_web && config.company_web.clickUrl),
-                    "URL;type=social_facebook;type=pref:"+ (config.social_facebook && config.social_facebook.clickUrl),
-                    "URL;type=social_twitter;type=pref:"+ (config.social_twitter && config.social_twitter.clickUrl),
-                    "URL;type=social_gplus;type=pref:"+ (config.social_gplus && config.social_gplus.clickUrl),
-                    "URL;type=social_pineterest;type=pref:"+ (config.social_pineterest && config.social_pineterest.clickUrl),
-                    "URL;type=social_tumblr;type=pref:"+ (config.social_tumblr && config.social_tumblr.clickUrl),
-                    "URL;type=social_web;type=pref:"+ (config.social_web && config.social_web.clickUrl),
-                    "URL;type=company_audio;type=pref:"+ (config.company_audio && config.company_audio.clickUrl),
-                    "URL;type=company_pdf;type=pref:"+ (config.company_pdf && config.company_pdf.clickUrl),
-                    "URL;type=company_logo_apath;type=pref:"+ (config.company_logo && config.company_logo.absolutePath),
-                    "URL;type=photo_album_apath1;type=pref:"+ (config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath),
-                    "URL;type=photo_album_apath2;type=pref:"+ (config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath),
-                    "URL;type=user_photo_apath;type=pref:"+ (config.user_photo && config.user_photo.absolutePath),
-                    "PHOTO;VALUE=URL;TYPE=PNG:"+ (config.user_photo && config.user_photo.absolutePath) ,
-                    "END:VCARD"].join(lb);
+            "VERSION:3.0",
+            "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
+            "N:" + (config.full_name && config.full_name.text),
+            "FN:" + (config.full_name && config.full_name.text),
+            "ORG:" + (config.company_name && config.company_name.text),
+            "TITLE:" + (config.job_title && config.job_title.text),
+            "EMAIL;type=WORK:" + (config.company_mail && config.company_mail.text),
+            "TEL;type=work;type=VOICE;type=pref:" + (config.company_phone && config.company_phone.clickUrl),
+            "ADR;type=work;type=pref:" + (config.company_map && config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')),
+            "URL;type=company_video;type=pref:" + (config.company_video && config.company_video.clickUrl),
+            "URL;type=company_web;type=pref:" + (config.company_web && config.company_web.clickUrl),
+            "URL;type=social_facebook;type=pref:" + (config.social_facebook && config.social_facebook.clickUrl),
+            "URL;type=social_twitter;type=pref:" + (config.social_twitter && config.social_twitter.clickUrl),
+            "URL;type=social_gplus;type=pref:" + (config.social_gplus && config.social_gplus.clickUrl),
+            "URL;type=social_pineterest;type=pref:" + (config.social_pineterest && config.social_pineterest.clickUrl),
+            "URL;type=social_tumblr;type=pref:" + (config.social_tumblr && config.social_tumblr.clickUrl),
+            "URL;type=social_web;type=pref:" + (config.social_web && config.social_web.clickUrl),
+            "URL;type=company_audio;type=pref:" + (config.company_audio && config.company_audio.clickUrl),
+            "URL;type=company_pdf;type=pref:" + (config.company_pdf && config.company_pdf.clickUrl),
+            "URL;type=company_logo_apath;type=pref:" + (config.company_logo && config.company_logo.absolutePath),
+            "URL;type=photo_album_apath1;type=pref:" + (config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath),
+            "URL;type=photo_album_apath2;type=pref:" + (config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath),
+            "URL;type=user_photo_apath;type=pref:" + (config.user_photo && config.user_photo.absolutePath),
+            "PHOTO;VALUE=URL;TYPE=PNG:" + (config.user_photo && config.user_photo.absolutePath),
+            "END:VCARD"
+        ].join(lb);
 
         return vCardText;
     },
@@ -245,7 +190,7 @@ var vCard = {
      * @param {String} row unfolded content line
      * @return for each content line an object is returned (see return statement for the object structure)
      */
-    parseDirectoryMimeTypeRow : function(orig_row) {
+    parseDirectoryMimeTypeRow: function(orig_row) {
         var SAFE_CHAR_REGEXP_STR = '[\\x09\\x20\\x21\\x23-\\x2B\\x2D-\\x39\\x3C-\\x7E\\x80-\\xFF]';
         var QSAFE_CHAR_REGEXP_STR = '[\\x09\\x20\\x21\\x23-\\x7E\\x80-\\xFF]';
         var GROUP_REGEXP_STR = '[a-zA-Z0-9\\-]+';
@@ -336,7 +281,7 @@ var vCard = {
      * Parses a string of ASCII charachers in an object representing the directory entry.
      * @method parseDirectoryMimeType
      */
-    parseDirectoryMimeType : function(text) {
+    parseDirectoryMimeType: function(text) {
         var unfold = /\r\n(\t|\x20)/;
 
         // Perform unfolding
@@ -362,7 +307,7 @@ var vCard = {
      * @param {String} elementValue optional. The element value to search for. If null we search forn null value. In not specified we don't search for a particular value.
      * @returns {Integer} the index in 'data' for the found element or -1 if not found.
      */
-    findElement : function(data, elementName, elementValue) {
+    findElement: function(data, elementName, elementValue) {
         var i = 0;
 
         if (elementValue === undefined) {
@@ -391,7 +336,7 @@ var vCard = {
         }
     },
 
-    decodeQuotedPrintableHelper : function(str, prefix) {
+    decodeQuotedPrintableHelper: function(str, prefix) {
         var decoded_bytes = [];
         for (var i = 0; i < str.length;) {
             if (str.charAt(i) == prefix) {
@@ -406,7 +351,7 @@ var vCard = {
     },
 
     // "=E3=81=82=E3=81=84" => [ 0xE3, 0x81, 0x82, 0xE3, 0x81, 0x84 ]
-    decodeQuotedPrintable : function(str) {
+    decodeQuotedPrintable: function(str) {
         str = str.replace(/_/g, " "); // RFC 2047.
         return vCard.decodeQuotedPrintableHelper(str, "=");
     },
@@ -419,7 +364,7 @@ var vCard = {
      * @param {Object} x.value Contains the value
      * @returns {String} The decoded value
      */
-    decodeText : function(x) {
+    decodeText: function(x) {
         // Default encoding
         var encoding = "7bit";
         var me = vCard;
@@ -455,7 +400,7 @@ var vCard = {
         return Iconv.decode(binary_value, charset);
     },
 
-    decodeEmail : function(x) {
+    decodeEmail: function(x) {
         // Default encoding
         var encoding = "7bit";
         var ind = vCard.findElement(x.params, 'encoding');
@@ -490,7 +435,7 @@ var vCard = {
         return Iconv.decode(binary_value, charset);
     },
 
-    decodeAdr : function(x) {
+    decodeAdr: function(x) {
         var value = vCard.decodeText(x);
         var spladr = value.split(";");
         return {
@@ -504,7 +449,7 @@ var vCard = {
         };
     },
 
-    decodeN : function(x) {
+    decodeN: function(x) {
         var value = vCard.decodeText(x);
         var spln = value.split(";");
         return {
@@ -542,7 +487,7 @@ var vCard = {
      * 5th (PREF) => {home:"1231231231", work:"1231231231"}<br>
      * @method decodeTel
      */
-    decodeTel : function(x) {
+    decodeTel: function(x) {
         var value = vCard.decodeText(x);
         var matched = false;
         var ret = {};
@@ -563,7 +508,7 @@ var vCard = {
         return ret;
     },
 
-    decodeTelV3 : function(x) {
+    decodeTelV3: function(x) {
         var value = vCard.decodeText(x);
         var matched = false;
         var ret;
@@ -584,18 +529,9 @@ var vCard = {
         return ret;
     },
 
-    decodeNotSupported : function(val, params) {
+    decodeNotSupported: function(val, params) {
         console.log("vCard vCard element is currently not supported.");
     },
-
-    /**
-     * vCard object defines the structure the vcard object will have.<br>
-     * It is structured as a tree with functions as leafs.<br>
-     * First level branches properties are matched against attributes names.<br>
-     * Other levels are mathed against parameters (depending on vcard version)<br>
-     * For each match the leaf function gets called with the value as argument to get the right representation.<br>
-     * @property vcard21Struct
-     */
 
     /**
      * RFC 2426<br>
@@ -609,7 +545,7 @@ var vCard = {
      * @param data an array of parsed contentlines
      * @return an object representing the parsed vcard content
      */
-    parsevCard : function(data) {
+    parsevCard: function(data) {
         var begin = 0,
             end = 0;
 
@@ -742,204 +678,215 @@ var vCard = {
     }
 };
 var vcard3Struct = {
-        begin: vCard.decodeText,
-        end: vCard.decodeText,
-        version: vCard.decodeText,
+    begin: vCard.decodeText,
+    end: vCard.decodeText,
+    version: vCard.decodeText,
 
-        n: vCard.decodeN,
-        fn: vCard.decodeText,
-        prodid: vCard.decodeText,
-        'x-ablabel': vCard.decodeText,
-        'x-socialprofile': vCard.decodeText,
-        'x-abuid': vCard.decodeText,
-        'x-maidenname': vCard.decodeText,
-        'x-phonetic-first-name': vCard.decodeText,
-        'x-phonetic-last-name': vCard.decodeText,
-        'x-aim': vCard.decodeText,
-        'impp': vCard.decodeText,
-        'x-abdate': vCard.decodeText,
-        adr: {
-            home: vCard.decodeAdr,
-            work: vCard.decodeAdr,
-            dom: vCard.decodeAdr,
-            intl: vCard.decodeAdr,
-            postal: vCard.decodeAdr,
-            parcel: vCard.decodeAdr
-        },
-        label: {
-            home: vCard.decodeText,
-            work: vCard.decodeText,
-            dom: vCard.decodeText,
-            intl: vCard.decodeText,
-            postal: vCard.decodeText,
-            parcel: vCard.decodeText
-        },
-        tel: {
-            voice: vCard.decodeTelV3,
-            fax: vCard.decodeTelV3,
-            modem: vCard.decodeTelV3,
-            isdn: vCard.decodeTelV3,
-            msg: vCard.decodeTelV3,
-            video: vCard.decodeTelV3,
-            pref: vCard.decodeTelV3,
-            work: vCard.decodeTelV3,
-            home: vCard.decodeTelV3,
-            cell: vCard.decodeTelV3,
-            pager: vCard.decodeTelV3,
-            bbs: vCard.decodeTelV3,
-            car: vCard.decodeTelV3,
-            iphone: vCard.decodeTelV3,
-            main: vCard.decodeTelV3,
-            other: vCard.decodeTelV3
-        },
-        email: {
-            internet: vCard.decodeEmail,
-            aol: vCard.decodeEmail,
-            applelink: vCard.decodeEmail,
-            attmail: vCard.decodeEmail,
-            cis: vCard.decodeEmail,
-            eworld: vCard.decodeEmail,
-            ibmmail: vCard.decodeEmail,
-            mcimail: vCard.decodeEmail,
-            powershare: vCard.decodeEmail,
-            prodigy: vCard.decodeEmail,
-            tlx: vCard.decodeEmail,
-            x400: vCard.decodeEmail,
-            work: vCard.decodeEmail,
-            other: vCard.decodeEmail,
-            home: vCard.decodeEmail,
-            "company_mail": vCard.decodeEmail
-        },
-        mailer: vCard.decodeText,
-        tz: vCard.decodeText,
-        geo: vCard.decodeText,
-        title: vCard.decodeText,
-        role: vCard.decodeText,
-        logo: vCard.decodeText,
-        agent: vCard.decodeText,
-        org: vCard.decodeText,
-        note: vCard.decodeText,
-        rev: vCard.decodeText,
-        "sort-string": vCard.decodeText,
-        sound: {
-            wave: vCard.decodeText,
-            pcm: vCard.decodeText,
-            aiff: vCard.decodeText
-        },
-        url: {
-            "full_name": vCard.decodeText,
-            "company_mail": vCard.decodeText,
-            "company_video": vCard.decodeText,
-            "company_message": vCard.decodeText,
-            "company_name": vCard.decodeText,
-            "company_logo": vCard.decodeText,
-            "company_web": vCard.decodeText,
-            "company_phone": vCard.decodeText,
-            "company_map": vCard.decodeText,
-            "photo_album": vCard.decodeText,
-            "social_facebook": vCard.decodeText,
-            "social_twitter": vCard.decodeText,
-            "social_gplus": vCard.decodeText,
-            "social_linkedin": vCard.decodeText,
-            "social_pineterest": vCard.decodeText,
-            "social_tumblr": vCard.decodeText,
-            "social_web": vCard.decodeText,
-            "company_audio": vCard.decodeText,
-            "company_pdf": vCard.decodeText,
-            "company_video_apath": vCard.decodeText,
-            "company_message_apath": vCard.decodeText,
-            "company_logo_apath": vCard.decodeText,
-            "photo_album_apath1": vCard.decodeText,
-            "photo_album_apath2": vCard.decodeText,
-            "user_photo_apath": vCard.decodeText
-        },
-        uid: vCard.decodeText,
-        key: {
-            pgp: vCard.decodeText,
-            x509: vCard.decodeText
-        },
-        photo: vCard.decodeText,
-        bday: vCard.decodeText,
-        nickname: vCard.decodeText
-    };
+    n: vCard.decodeN,
+    fn: vCard.decodeText,
+    prodid: vCard.decodeText,
+    'x-ablabel': vCard.decodeText,
+    'x-socialprofile': vCard.decodeText,
+    'x-abuid': vCard.decodeText,
+    'x-maidenname': vCard.decodeText,
+    'x-phonetic-first-name': vCard.decodeText,
+    'x-phonetic-last-name': vCard.decodeText,
+    'x-aim': vCard.decodeText,
+    'impp': vCard.decodeText,
+    'x-abdate': vCard.decodeText,
+    adr: {
+        home: vCard.decodeAdr,
+        work: vCard.decodeAdr,
+        dom: vCard.decodeAdr,
+        intl: vCard.decodeAdr,
+        postal: vCard.decodeAdr,
+        parcel: vCard.decodeAdr
+    },
+    label: {
+        home: vCard.decodeText,
+        work: vCard.decodeText,
+        dom: vCard.decodeText,
+        intl: vCard.decodeText,
+        postal: vCard.decodeText,
+        parcel: vCard.decodeText
+    },
+    tel: {
+        voice: vCard.decodeTelV3,
+        fax: vCard.decodeTelV3,
+        modem: vCard.decodeTelV3,
+        isdn: vCard.decodeTelV3,
+        msg: vCard.decodeTelV3,
+        video: vCard.decodeTelV3,
+        pref: vCard.decodeTelV3,
+        work: vCard.decodeTelV3,
+        home: vCard.decodeTelV3,
+        cell: vCard.decodeTelV3,
+        pager: vCard.decodeTelV3,
+        bbs: vCard.decodeTelV3,
+        car: vCard.decodeTelV3,
+        iphone: vCard.decodeTelV3,
+        main: vCard.decodeTelV3,
+        other: vCard.decodeTelV3
+    },
+    email: {
+        internet: vCard.decodeEmail,
+        aol: vCard.decodeEmail,
+        applelink: vCard.decodeEmail,
+        attmail: vCard.decodeEmail,
+        cis: vCard.decodeEmail,
+        eworld: vCard.decodeEmail,
+        ibmmail: vCard.decodeEmail,
+        mcimail: vCard.decodeEmail,
+        powershare: vCard.decodeEmail,
+        prodigy: vCard.decodeEmail,
+        tlx: vCard.decodeEmail,
+        x400: vCard.decodeEmail,
+        work: vCard.decodeEmail,
+        other: vCard.decodeEmail,
+        home: vCard.decodeEmail,
+        "company_mail": vCard.decodeEmail
+    },
+    mailer: vCard.decodeText,
+    tz: vCard.decodeText,
+    geo: vCard.decodeText,
+    title: vCard.decodeText,
+    role: vCard.decodeText,
+    logo: vCard.decodeText,
+    agent: vCard.decodeText,
+    org: vCard.decodeText,
+    note: vCard.decodeText,
+    rev: vCard.decodeText,
+    "sort-string": vCard.decodeText,
+    sound: {
+        wave: vCard.decodeText,
+        pcm: vCard.decodeText,
+        aiff: vCard.decodeText
+    },
+    url: {
+        "full_name": vCard.decodeText,
+        "company_mail": vCard.decodeText,
+        "company_video": vCard.decodeText,
+        "company_message": vCard.decodeText,
+        "company_name": vCard.decodeText,
+        "company_logo": vCard.decodeText,
+        "company_web": vCard.decodeText,
+        "company_phone": vCard.decodeText,
+        "company_map": vCard.decodeText,
+        "photo_album": vCard.decodeText,
+        "social_facebook": vCard.decodeText,
+        "social_twitter": vCard.decodeText,
+        "social_gplus": vCard.decodeText,
+        "social_linkedin": vCard.decodeText,
+        "social_pineterest": vCard.decodeText,
+        "social_tumblr": vCard.decodeText,
+        "social_web": vCard.decodeText,
+        "company_audio": vCard.decodeText,
+        "company_pdf": vCard.decodeText,
+        "company_video_apath": vCard.decodeText,
+        "company_message_apath": vCard.decodeText,
+        "company_logo_apath": vCard.decodeText,
+        "photo_album_apath1": vCard.decodeText,
+        "photo_album_apath2": vCard.decodeText,
+        "user_photo_apath": vCard.decodeText
+    },
+    uid: vCard.decodeText,
+    key: {
+        pgp: vCard.decodeText,
+        x509: vCard.decodeText
+    },
+    photo: vCard.decodeText,
+    bday: vCard.decodeText,
+    nickname: vCard.decodeText
+};
+
+
+/**
+ * vCard object defines the structure the vcard object will have.<br>
+ * It is structured as a tree with functions as leafs.<br>
+ * First level branches properties are matched against attributes names.<br>
+ * Other levels are mathed against parameters (depending on vcard version)<br>
+ * For each match the leaf function gets called with the value as argument to get the right representation.<br>
+ * @property vcard21Struct
+ */
 var vcard21Struct = {
-        // Parse even those.
-        begin: vCard.decodeText,
-        end: vCard.decodeText,
-        version: vCard.decodeText,
+    // Parse even those.
+    begin: vCard.decodeText,
+    end: vCard.decodeText,
+    version: vCard.decodeText,
 
-        n: vCard.decodeN,
-        fn: vCard.decodeText,
-        adr: {
-            home: vCard.decodeAdr,
-            work: vCard.decodeAdr,
-            dom: vCard.decodeAdr,
-            intl: vCard.decodeAdr,
-            postal: vCard.decodeAdr,
-            parcel: vCard.decodeAdr
-        },
-        label: {
-            home: vCard.decodeText,
-            work: vCard.decodeText,
-            dom: vCard.decodeText,
-            intl: vCard.decodeText,
-            postal: vCard.decodeText,
-            parcel: vCard.decodeText
-        },
-        tel: {
-            voice: vCard.decodeTel,
-            fax: vCard.decodeTel,
-            modem: vCard.decodeTel,
-            isdn: vCard.decodeTel,
-            msg: vCard.decodeTel,
-            video: vCard.decodeTel,
-            pref: vCard.decodeTel,
-            work: vCard.decodeTel,
-            home: vCard.decodeTel,
-            cell: vCard.decodeTel,
-            pager: vCard.decodeTel,
-            bbs: vCard.decodeTel,
-            car: vCard.decodeTel
-        },
-        email: {
-            internet: vCard.decodeText,
-            aol: vCard.decodeText,
-            applelink: vCard.decodeText,
-            attmail: vCard.decodeText,
-            cis: vCard.decodeText,
-            eworld: vCard.decodeText,
-            ibmmail: vCard.decodeText,
-            mcimail: vCard.decodeText,
-            powershare: vCard.decodeText,
-            prodigy: vCard.decodeText,
-            tlx: vCard.decodeText,
-            x400: vCard.decodeText
-        },
-        mailer: vCard.decodeText,
-        tz: vCard.decodeText,
-        geo: vCard.decodeText,
-        title: vCard.decodeText,
-        role: vCard.decodeText,
-        logo: vCard.decodeNotSupported,
-        agent: vCard.decodeNotSupported,
-        org: vCard.decodeText,
-        note: vCard.decodeText,
-        rev: vCard.decodeText,
-        sound: {
-            wave: vCard.decodeNotSupported,
-            pcm: vCard.decodeNotSupported,
-            aiff: vCard.decodeNotSupported
-        },
-        url: vCard.decodeText,
-        uid: vCard.decodeText,
-        key: {
-            pgp: vCard.decodeNotSupported,
-            x509: vCard.decodeNotSupported
-        },
-        photo: vCard.decodeNotSupported,
-        bday: vCard.decodeText,
+    n: vCard.decodeN,
+    fn: vCard.decodeText,
+    adr: {
+        home: vCard.decodeAdr,
+        work: vCard.decodeAdr,
+        dom: vCard.decodeAdr,
+        intl: vCard.decodeAdr,
+        postal: vCard.decodeAdr,
+        parcel: vCard.decodeAdr
+    },
+    label: {
+        home: vCard.decodeText,
+        work: vCard.decodeText,
+        dom: vCard.decodeText,
+        intl: vCard.decodeText,
+        postal: vCard.decodeText,
+        parcel: vCard.decodeText
+    },
+    tel: {
+        voice: vCard.decodeTel,
+        fax: vCard.decodeTel,
+        modem: vCard.decodeTel,
+        isdn: vCard.decodeTel,
+        msg: vCard.decodeTel,
+        video: vCard.decodeTel,
+        pref: vCard.decodeTel,
+        work: vCard.decodeTel,
+        home: vCard.decodeTel,
+        cell: vCard.decodeTel,
+        pager: vCard.decodeTel,
+        bbs: vCard.decodeTel,
+        car: vCard.decodeTel
+    },
+    email: {
+        internet: vCard.decodeText,
+        aol: vCard.decodeText,
+        applelink: vCard.decodeText,
+        attmail: vCard.decodeText,
+        cis: vCard.decodeText,
+        eworld: vCard.decodeText,
+        ibmmail: vCard.decodeText,
+        mcimail: vCard.decodeText,
+        powershare: vCard.decodeText,
+        prodigy: vCard.decodeText,
+        tlx: vCard.decodeText,
+        x400: vCard.decodeText
+    },
+    mailer: vCard.decodeText,
+    tz: vCard.decodeText,
+    geo: vCard.decodeText,
+    title: vCard.decodeText,
+    role: vCard.decodeText,
+    logo: vCard.decodeNotSupported,
+    agent: vCard.decodeNotSupported,
+    org: vCard.decodeText,
+    note: vCard.decodeText,
+    rev: vCard.decodeText,
+    sound: {
+        wave: vCard.decodeNotSupported,
+        pcm: vCard.decodeNotSupported,
+        aiff: vCard.decodeNotSupported
+    },
+    url: vCard.decodeText,
+    uid: vCard.decodeText,
+    key: {
+        pgp: vCard.decodeNotSupported,
+        x509: vCard.decodeNotSupported
+    },
+    photo: vCard.decodeNotSupported,
+    bday: vCard.decodeText,
 
-        // Non-standard?
-        nickname: vCard.decodeText
-    };
+    // Non-standard?
+    nickname: vCard.decodeText
+};
+
 module.exports = vCard;
