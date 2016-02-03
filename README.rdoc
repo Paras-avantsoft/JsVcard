@@ -2,4 +2,6 @@
 
 The main goal of this library is to make the boring personal data forms filling easier using your own vCard.
 
-To accomplish this a parsing library has been developed from scratch and, taking advantage of HTML5 & JavaScript it is possible to read the vCard directly from filesystem.
+To accomplish this a parsing library has been developed from scratch and, taking advantage of HTML5 & JavaScript(nodeJs) it is possible to read the vCard directly from filesystem.
+
+Here with use of nodeJs you can import your vcf file and get data in json format and also export your VCF file with the input in json format
