@@ -5,6 +5,8 @@ var path = require('path');
 var vcard = require('./src/vCard');
 
 http.createServer(function(req, res) {
+
+    // VCF EXPORT
     if (url.parse(req.url,true).pathname === '/configdata') {
         console.log("url >>>", req.url);
         var uId = url.parse(req.url,true).query.uId,
@@ -28,21 +30,17 @@ http.createServer(function(req, res) {
         res.write(uId +'-myvcard.vcf');
         res.end();
     }
-
-    // xyz.substr(xyz.indexOf('BEGIN:vcard'), xyz.indexOf(END:vcard) + 9)
-
+    
+    // VCF IMPORT
     if (req.url === '/vcardimport') {
         var body,
             vcfData = '',
             jsonData = {};
         req.on('data', function(chunk) {
-            body += chunk;
+            body += chunk.toString();
         });
         req.on('end', function() {
-
-            var endString = (body.indexOf('END:VCARD')-165) + '';
-
-            vcfData = body.substr(body.indexOf('BEGIN:VCARD'), endString);
+            vcfData = body.substring(body.indexOf('BEGIN:VCARD'), (body.indexOf('END:VCARD')+9));
 
             console.log(vcfData);
 
