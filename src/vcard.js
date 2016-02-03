@@ -151,7 +151,7 @@ var vCard = {
         if (!config) {
             return 'no vcf data found';
         }
-        vCardText = ["BEGIN:VCARD",
+        var vCardText = ["BEGIN:VCARD",
             "VERSION:3.0",
             "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
             "N:" + (config.full_name && config.full_name.text),
