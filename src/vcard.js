@@ -66,7 +66,7 @@ var vCard = {
             cUrl = cardData.url,
             userAdr = workAdr.addr,
             userConfig = {
-                config: {
+                "config": {
                     "full_name": {
                         "text": cardData.fn
                     },
@@ -143,14 +143,13 @@ var vCard = {
                         "type": "absolute"
                     }
                 },
-                "viewCardPath": ""
+                "viewCardPath": cUrl.viewcardpath
             };
-            console.log(cUrl);
+        console.log(userConfig);
         return userConfig;
     },
 
     convertJsonToVCF: function(configs) {
-        console.log(configs);
         var lb = "\r\n",
             config = configs.viewCardPath ? configs.config : configs,
             i = 0;
@@ -158,7 +157,6 @@ var vCard = {
         if (!config) {
             return 'no vcf data found';
         }
-        // console.log(config);
         var prefix = [
                 "BEGIN:VCARD",
                 "VERSION:3.0",
@@ -301,39 +299,6 @@ var vCard = {
             return (n != '' || n != undefined)
         }).join(lb);
         console.log(vCardText);
-
-        // var photoAlbum1 = config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath,
-        //     photoAlbum2 = config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath,
-        //     vCardText = ["BEGIN:VCARD",
-        //         "VERSION:3.0",
-        //         "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
-        //     (config.full_name && config.full_name.hidden !== true) && ("N:" + config.full_name.text),
-        //     (config.full_name && config.full_name.hidden !== true) && ("FN:" + config.full_name.text),
-        //     (config.company_name && config.company_name.hidden !== true) && ("ORG:" + config.company_name.text),
-        //     (config.job_title && config.job_title.hidden !== true) && ("TITLE:" + config.job_title.text),
-        //     (config.company_mail && config.company_mail.hidden !== true) && ("EMAIL;type=WORK;type=pref:" + config.company_mail.text),
-        //     (config.company_phone && config.company_phone.hidden !== true) && ("TEL;type=work;type=VOICE;type=pref:" + config.company_phone.clickUrl),
-        //     (config.company_map && config.company_map.hidden !== true)&& ("ADR;type=work;type=pref:" + config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')),
-        //     (config.company_video && config.company_video.hidden !== true) && ("URL;type=company_video;type=pref:" + config.company_video.clickUrl),
-        //     (config.company_web && config.company_web.hidden !== true) && ("URL;type=company_web;type=pref:" + config.company_web.clickUrl),
-        //     (config.social_facebook && config.social_facebook.hidden !== true) && ("URL;type=social_facebook;type=pref:" + config.social_facebook.clickUrl),
-        //     (config.social_linkedin && config.social_linkedin.hidden !== true) && ("URL;type=social_linkedin;type=pref:" + config.social_linkedin.clickUrl),
-        //     (config.social_twitter && config.social_twitter.hidden !== true) && ("URL;type=social_twitter;type=pref:" + config.social_twitter.clickUrl),
-        //     (config.social_gplus && config.social_gplus.hidden !== true) && ("URL;type=social_gplus;type=pref:" + config.social_gplus.clickUrl),
-        //     (config.social_pineterest && config.social_pineterest.hidden !== true) && ("URL;type=social_pineterest;type=pref:" + config.social_pineterest.clickUrl),
-        //     (config.social_tumblr && config.social_tumblr.hidden !== true) && ("URL;type=social_tumblr;type=pref:" + config.social_tumblr.clickUrl),
-        //     (config.social_web && config.social_web.hidden !== true) && ("URL;type=social_web;type=pref:" + config.social_web.clickUrl),
-        //     (config.company_audio && config.company_audio.hidden !== true) && ("URL;type=company_audio;type=pref:" + config.company_audio.clickUrl),
-        //     (config.company_pdf && config.company_pdf.hidden !== true) && ("URL;type=company_pdf;type=pref:" + config.company_pdf.clickUrl),
-        //     (config.company_logo && config.company_logo.hidden !== true) && ("URL;type=company_logo_apath;type=pref:" + config.company_logo.absolutePath),
-        //     (photoAlbum1) && ("URL;type=photo_album_apath1;type=pref:" + photoAlbum1),
-        //     (photoAlbum2) && ("URL;type=photo_album_apath2;type=pref:" + photoAlbum2),
-        //     (config.user_photo && config.user_photo.hidden !== true) && ("URL;type=user_photo_apath;type=pref:" + config.user_photo.absolutePath),
-        //     (config.viewCardPath && config.viewCardPath.hidden !== true) && ("URL;type=My up to date contact info;type=pref:" + config.viewCardPath),
-        //     (config.user_photo && config.user_photo.hidden !== true) && ("PHOTO;VALUE=URL;TYPE=PNG:" + config.user_photo.absolutePath),
-        //     (config.company_message && config.company_message.hidden !== true) && ("NOTE:"+ config.company_message.text.replace(/(?:\r\n|\r|\n)/g, ', ')),
-        //     "END:VCARD"
-        // ].filter(function(n){ return (n != '' || n != undefined)}).join(lb);
 
         return vCardText;
     },
@@ -782,7 +747,6 @@ var vCard = {
             for (var i = 0; i < data.length; i++) {
                 var row = data[i];
                 var tagName = row.name.toLowerCase();
-                console.log(vcard3Struct);
                 if (vcard3Struct[tagName] === undefined) {
                     throw "Undefined vcard tag: " + row.name;
                 }
@@ -791,8 +755,8 @@ var vCard = {
 
                     // Cycle through the parameters
                     for (var par = 0; par < row.params.length; par++) {
-
-                        var paramName = row.params[par].value.toLowerCase();
+                        console.log((row.params[par].value === 'My up to date contact info') ? 'viewcardpath' : row.params[par].value.toLowerCase());
+                        var paramName = (row.params[par].value === 'My up to date contact info') ? 'viewcardpath' : row.params[par].value.toLowerCase();
                         if (typeof vcard3Struct[tagName][paramName] == "function") {
                             if (ret[tagName] === undefined) {
                                 ret[tagName] = {};
@@ -941,7 +905,8 @@ var vcard3Struct = {
         "logo": vCard.decodeText,
         "album1": vCard.decodeText,
         "album2": vCard.decodeText,
-        "user_photo_apath": vCard.decodeText
+        "user_photo_apath": vCard.decodeText,
+        "viewcardpath": vCard.decodeText
     },
     uid: vCard.decodeText,
     key: {
