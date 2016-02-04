@@ -1,1 +1,101 @@
-{"config":{"full_name":{"text":"Paras Pavasiya"},"company_mail":{"clickUrl":"paras.avantsoft@gmail.com"},"company_video":{"clickUrl":"https://www.youtube.com/playlist?list=pl0z67tlytawpkl4esyp7tndjyn547rtni"},"company_message":{"text":"AvantSoftIndia is part of AvantSoft"},"job_title":{"text":"Software Developer"},"company_name":{"text":"AvantsoftIndia"},"company_logo":{"activeDisplayType":"image","type":"absolute","absolutePath":"https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"},"company_web":{"clickUrl":"http://www.avantsoft.com/"},"company_phone":{"clickUrl":"9876543211"},"company_map":{"text":"A/413, Atma House, Opp. OLD RBI , Asharam road, Ahmedabad Gujarat - 380006"},"photo_album":{"images":[{"type":"absolute","filename":"","absolutePath":"https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"},{"type":"absolute","filename":"","absolutePath":"https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449725086399-_ScreenShot2015-12-03at35710pm.png"}]},"social_facebook":{"clickUrl":"http://facebook.com/username"},"social_twitter":{"clickUrl":"http://twitter.com/username"},"social_gplus":{"clickUrl":"http://plus.google.com/username"},"social_linkedin":{"clickUrl":"http://linkedin.com/username"},"social_pineterest":{"clickUrl":"http://pinterest.com/username"},"social_tumblr":{"clickUrl":"http://tumblr.com/username"},"social_web":{"clickUrl":"http://yourweblink.com/"},"company_audio":{"clickUrl":"http://yourlinkaudiolink.com/"},"company_pdf":{"clickUrl":"http://yourpdflink.com/"},"user_photo":{"absolutePath":"https://ipluscards.com/user/546c243dd4f2c100009a7e8e/1449171108739-hdpi.png","activeDisplayType":"image","type":"absolute"}},"viewCardPath":"https://dev.ipluscards.com:8000/inviteapp/inviteapp_new/app/viewer.html#/?id=tKT6x"}
+{
+    "config": {
+        "full_name": {
+            "text": "Paras Pavasiya"
+        },
+        "company_mail": {
+            "clickUrl": "paras.avantsoft@gmail.com"
+        },
+        "company_video": {
+            "clickUrl": "https://www.youtube.com/playlist?list=pl0z67tlytawpkl4esyp7tndjyn547rtni"
+        },
+        "company_message": {
+            "text": "AvantSoftIndia is part of AvantSoft"
+        },
+        "job_title": {
+            "text": "Software Developer"
+        },
+        "company_name": {
+            "text": "AvantsoftIndia"
+        },
+        "company_logo": {
+            "activeDisplayType": "image",
+            "type": "absolute",
+            "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
+        },
+        "company_web": {
+            "clickUrl": "http://www.avantsoft.com/"
+        },
+        "company_map": {
+            "text": "A/413, Atma House\nOpp. OLD RBI \nAsharam road\nAhmedabad Gujarat - 380006"
+        },
+        "photo_album": {
+            "images": [{
+                "type": "absolute",
+                "filename": "1449831678550-64_icon_ipluscard.png",
+                "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449831678550-64_icon_ipluscard.png"
+            }, {
+                "type": "absolute",
+                "filename": "1449725086399-_ScreenShot2015-12-03at35710pm.png",
+                "absolutePath": "https://ipluscards.com/user/556e8d62dc146542bf55bbbf/1449725086399-_ScreenShot2015-12-03at35710pm.png"
+            }]
+        },
+        "social_facebook": {
+            "clickUrl": "http://facebook.com/username"
+        },
+        "social_twitter": {
+            "clickUrl": "http://twitter.com/username"
+        },
+        "social_gplus": {
+            "clickUrl": "http://plus.google.com/username"
+        },
+        "social_linkedin": {
+            "clickUrl": "http://linkedin.com/username"
+        },
+        "social_pineterest": {
+            "clickUrl": "http://pinterest.com/username"
+        },
+        "social_tumblr": {
+            "clickUrl": "http://tumblr.com/username"
+        },
+        "social_web": {
+            "clickUrl": "http://yourweblink.com/"
+        },
+        "company_audio": {
+            "clickUrl": "http://yourlinkaudiolink.com/"
+        },
+        "company_pdf": {
+            "clickUrl": "http://yourpdflink.com/"
+        },
+        "user_photo": {
+            "absolutePath": "https://ipluscards.com/user/546c243dd4f2c100009a7e8e/1449171108739-hdpi.png",
+            "activeDisplayType": "image",
+            "type": "absolute"
+        },
+        "company_phone": {
+            "clickUrl": "9876543211"
+        },
+        "company_phone1454499561302": {
+            "clickUrl": "1234567890",
+            "vType": "phone",
+            "textConfig": {
+                "text": "1234567890 (Home)"
+            }
+        },
+        "company_phone1454499592305": {
+            "clickUrl": "8866778899",
+            "vType": "phone",
+            "textConfig": {
+                "text": "8866778899 (Work)"
+            }
+        },
+        "company_phone1454499599525": {
+            "clickUrl": "9998887773",
+            "vType": "phone",
+            "textConfig": {
+                "text": "9998887773 (Fax)"
+            }
+        }
+    },
+    "viewCardPath": "https://dev.ipluscards.com:8000/inviteapp/inviteapp_new/app/viewer.html#/?id=tKT6x"
+}
