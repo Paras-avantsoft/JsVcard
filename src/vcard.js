@@ -64,84 +64,88 @@ var vCard = {
         var cardData = vCard.parsevCard(vCard.parseDirectoryMimeType(data)),
             workAdr = cardData.adr.work,
             cUrl = cardData.url,
-            userAdr = workAdr.street + ", " + workAdr.location + ", " + workAdr.region + "-" + workAdr.postalcode,
+            userAdr = workAdr.addr,
             userConfig = {
-                "full_name": {
-                    "text": cardData.fn
-                },
-                "company_mail": {
-                    "text": cardData.email.work
-                },
-                "company_video": {
-                    "clickUrl": cUrl.company_video
-                },
-                "company_message": {
-                    "text": "company tag line or \nsome multi line message"
-                },
-                "job_title": {
-                    "text": cardData.title
-                },
-                "company_name": {
-                    "text": cardData.org
-                },
-                "company_logo": {
-                    "activeDisplayType": "image",
-                    "type": "absolute",
-                    "absolutePath": cUrl.company_logo_apath
-                },
-                "company_web": {
-                    "clickUrl": cUrl.company_web
-                },
-                "company_phone": {
-                    "clickUrl": cardData.tel.work
-                },
-                "company_map": {
-                    "text": userAdr
-                },
-                "photo_album": {
-                    "images": [{
+                config: {
+                    "full_name": {
+                        "text": cardData.fn
+                    },
+                    "company_mail": {
+                        "clickUrl": cardData.email.work
+                    },
+                    "company_video": {
+                        "clickUrl": cUrl.video
+                    },
+                    "company_message": {
+                        "text": cardData.note
+                    },
+                    "job_title": {
+                        "text": cardData.title
+                    },
+                    "company_name": {
+                        "text": cardData.org
+                    },
+                    "company_logo": {
+                        "activeDisplayType": "image",
                         "type": "absolute",
-                        "filename": "",
-                        "absolutePath": cUrl.photo_album_apath1
-                    }, {
-                        "type": "absolute",
-                        "filename": "",
-                        "absolutePath": cUrl.photo_album_apath1
-                    }]
+                        "absolutePath": cUrl.logo
+                    },
+                    "company_web": {
+                        "clickUrl": cUrl.companyurl
+                    },
+                    "company_phone": {
+                        "clickUrl": cardData.tel.work
+                    },
+                    "company_map": {
+                        "text": userAdr
+                    },
+                    "photo_album": {
+                        "images": [{
+                            "type": "absolute",
+                            "filename": "",
+                            "absolutePath": cUrl.album1
+                        }, {
+                            "type": "absolute",
+                            "filename": "",
+                            "absolutePath": cUrl.album2
+                        }]
+                    },
+                    "social_facebook": {
+                        "clickUrl": cUrl.facebook
+                    },
+                    "social_twitter": {
+                        "clickUrl": cUrl.twitter
+                    },
+                    "social_gplus": {
+                        "clickUrl": cUrl.googleplus
+                    },
+                    "social_linkedin": {
+                        "clickUrl": cUrl.linkedin
+                    },
+                    "social_pineterest": {
+                        "clickUrl": cUrl.pineterest
+                    },
+                    "social_tumblr": {
+                        "clickUrl": cUrl.tumblr
+                    },
+                    "social_web": {
+                        "clickUrl": cUrl.socialurl
+                    },
+                    "company_audio": {
+                        "clickUrl": cUrl.audio
+                    },
+                    "company_pdf": {
+                        "clickUrl": cUrl.pdf
+                    },
+                    "user_photo": {
+                        "absolutePath": cardData.photo,
+                        "activeDisplayType": "image",
+                        "type": "absolute"
+                    }
                 },
-                "social_facebook": {
-                    "clickUrl": cUrl.social_facebook
-                },
-                "social_twitter": {
-                    "clickUrl": cUrl.social_twitter
-                },
-                "social_gplus": {
-                    "clickUrl": cUrl.social_gplus
-                },
-                "social_linkedin": {
-                    "clickUrl": cUrl.social_linkedin
-                },
-                "social_pineterest": {
-                    "clickUrl": cUrl.social_pineterest
-                },
-                "social_tumblr": {
-                    "clickUrl": cUrl.social_tumblr
-                },
-                "social_web": {
-                    "clickUrl": cUrl.social_web
-                },
-                "company_audio": {
-                    "clickUrl": cUrl.company_audio
-                },
-                "company_pdf": {
-                    "clickUrl": cUrl.company_pdf
-                },
-                "user_photo": {
-                    "absolutePath": cardData.photo,
-                    "activeDisplayType": "image",
-                    "type": "absolute"
-                }
+                "viewCardPath": ""
             };
+            console.log(cUrl);
         return userConfig;
     },
 
@@ -158,7 +162,8 @@ var vCard = {
         var prefix = [
                 "BEGIN:VCARD",
                 "VERSION:3.0",
-                "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN"],
+                "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN"
+            ],
             suffix = ["END:VCARD"],
             vcfBody = [],
             vCardText = [];
@@ -191,7 +196,7 @@ var vCard = {
             if (key.indexOf('company_phone') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("TEL;type=work" + (i === 0 ? "" : i)+ ";type=VOICE;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("TEL;type=work" + (i === 0 ? "" : i) + ";type=VOICE;type=pref:" + obj.clickUrl);
                 i++;
             }
             if (key.indexOf('company_map') !== -1) {
@@ -202,62 +207,62 @@ var vCard = {
             if (key.indexOf('company_video') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=company_video;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=video;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('company_web') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=company_web;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=companyurl;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_facebook') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_facebook;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=facebook;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_linkedin') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_linkedin;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=linkedin;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_twitter') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_twitter;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=twitter;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_gplus') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_gplus;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=googleplus;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_pineterest') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_pineterest;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=pineterest;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_tumblr') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_tumblr;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=tumblr;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('social_web') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=social_web;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=socialurl;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('company_audio') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=company_audio;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=audio;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('company_pdf') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=company_pdf;type=pref:" + obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=pdf;type=pref:" + obj.clickUrl);
             }
             if (key.indexOf('company_logo') !== -1) {
                 obj = config[key];
                 // console.log(obj.absolutePath);
-                (obj.hidden !== true) && vcfBody.push("URL;type=company_logo;type=pref:" + obj.absolutePath);
+                (obj.hidden !== true) && vcfBody.push("URL;type=logo;type=pref:" + obj.absolutePath);
             }
             if (key.indexOf('photo_album') !== -1) {
                 obj = config[key];
@@ -267,15 +272,15 @@ var vCard = {
                         photoAlbum2 = obj.images[1] && obj.images[1].absolutePath;
 
                     // console.log(obj.images);
-                    vcfBody.push("URL;type=photo_album_apath1;type=pref:" + photoAlbum1);
-                    vcfBody.push("URL;type=photo_album_apath2;type=pref:" + photoAlbum2);
+                    vcfBody.push("URL;type=album1;type=pref:" + photoAlbum1);
+                    vcfBody.push("URL;type=album2;type=pref:" + photoAlbum2);
                 }
             }
             if (key.indexOf('user_photo') !== -1) {
                 obj = config[key];
                 // console.log(obj.absolutePath);
                 if (obj.hidden !== true) {
-                    vcfBody.push("URL;type=user_photo_apath;type=pref:" + obj.absolutePath);
+                    vcfBody.push("URL;type=userPhoto;type=pref:" + obj.absolutePath);
                     vcfBody.push("PHOTO;VALUE=URL;TYPE=PNG:" + obj.absolutePath);
                 }
             }
@@ -292,8 +297,10 @@ var vCard = {
             vcfBody.push("URL;type=My up to date contact info;type=pref:" + configs.viewCardPath);
         }
 
-        vCardText = prefix.concat(vcfBody).concat(suffix).filter(function(n){ return (n != '' || n != undefined)}).join(lb);
-        // console.log(vCardText);
+        vCardText = prefix.concat(vcfBody).concat(suffix).filter(function(n) {
+            return (n != '' || n != undefined)
+        }).join(lb);
+        console.log(vCardText);
 
         // var photoAlbum1 = config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath,
         //     photoAlbum2 = config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath,
@@ -588,13 +595,13 @@ var vCard = {
         var value = vCard.decodeText(x);
         var spladr = value.split(";");
         return {
-            po: spladr[0],
-            extension: spladr[1],
-            street: spladr[2],
-            location: spladr[3],
-            region: spladr[4],
-            postalcode: spladr[5],
-            country: spladr[6]
+            addr: spladr[0],
+            // extension: spladr[1],
+            // street: spladr[2],
+            // location: spladr[3],
+            // region: spladr[4],
+            // postalcode: spladr[5],
+            // country: spladr[6]
         };
     },
 
@@ -892,8 +899,7 @@ var vcard3Struct = {
         x400: vCard.decodeEmail,
         work: vCard.decodeEmail,
         other: vCard.decodeEmail,
-        home: vCard.decodeEmail,
-        "company_mail": vCard.decodeEmail
+        home: vCard.decodeEmail
     },
     mailer: vCard.decodeText,
     tz: vCard.decodeText,
@@ -914,28 +920,27 @@ var vcard3Struct = {
     url: {
         "full_name": vCard.decodeText,
         "company_mail": vCard.decodeText,
-        "company_video": vCard.decodeText,
-        "company_message": vCard.decodeText,
+        "video": vCard.decodeText,
+        "compamny_message": vCard.decodeText,
         "company_name": vCard.decodeText,
-        "company_logo": vCard.decodeText,
-        "company_web": vCard.decodeText,
+        "logo": vCard.decodeText,
+        "companyurl": vCard.decodeText,
         "company_phone": vCard.decodeText,
-        "company_map": vCard.decodeText,
+        "map": vCard.decodeText,
         "photo_album": vCard.decodeText,
-        "social_facebook": vCard.decodeText,
-        "social_twitter": vCard.decodeText,
-        "social_gplus": vCard.decodeText,
-        "social_linkedin": vCard.decodeText,
-        "social_pineterest": vCard.decodeText,
-        "social_tumblr": vCard.decodeText,
-        "social_web": vCard.decodeText,
-        "company_audio": vCard.decodeText,
-        "company_pdf": vCard.decodeText,
-        "company_video_apath": vCard.decodeText,
-        "company_message_apath": vCard.decodeText,
-        "company_logo_apath": vCard.decodeText,
-        "photo_album_apath1": vCard.decodeText,
-        "photo_album_apath2": vCard.decodeText,
+        "facebook": vCard.decodeText,
+        "twitter": vCard.decodeText,
+        "googleplus": vCard.decodeText,
+        "linkedin": vCard.decodeText,
+        "pineterest": vCard.decodeText,
+        "tumblr": vCard.decodeText,
+        "socialurl": vCard.decodeText,
+        "audio": vCard.decodeText,
+        "pdf": vCard.decodeText,
+        "video": vCard.decodeText,
+        "logo": vCard.decodeText,
+        "album1": vCard.decodeText,
+        "album2": vCard.decodeText,
         "user_photo_apath": vCard.decodeText
     },
     uid: vCard.decodeText,
