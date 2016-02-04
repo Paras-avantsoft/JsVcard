@@ -148,43 +148,185 @@ var vCard = {
     convertJsonToVCF: function(configs) {
         console.log(configs);
         var lb = "\r\n",
-            config = configs.viewCardPath ? configs.config : configs;
+            config = configs.viewCardPath ? configs.config : configs,
+            i = 0;
 
         if (!config) {
             return 'no vcf data found';
         }
-        var photoAlbum1 = config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath,
-            photoAlbum2 = config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath,
-            vCardText = ["BEGIN:VCARD",
-            "VERSION:3.0",
-            "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
-            (config.full_name && config.full_name.hidden !== true) && ("N:" + config.full_name.text) || '',
-            (config.full_name && config.full_name.hidden !== true) && ("FN:" + config.full_name.text) || '',
-            (config.company_name && config.company_name.hidden !== true) && ("ORG:" + config.company_name.text) || '',
-            (config.job_title && config.job_title.hidden !== true) && ("TITLE:" + config.job_title.text) || '',
-            (config.company_mail && config.company_mail.hidden !== true) && ("EMAIL;type=WORK;type=pref:" + config.company_mail.text) || '',
-            (config.company_phone && config.company_phone.hidden !== true) && ("TEL;type=work;type=VOICE;type=pref:" + config.company_phone.clickUrl) || '',
-            (config.company_map && config.company_map.hidden !== true)&& ("ADR;type=work;type=pref:" + config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')) || '',
-            (config.company_video && config.company_video.hidden !== true) && ("URL;type=company_video;type=pref:" + config.company_video.clickUrl) || '',
-            (config.company_web && config.company_web.hidden !== true) && ("URL;type=company_web;type=pref:" + config.company_web.clickUrl) || '',
-            (config.social_facebook && config.social_facebook.hidden !== true) && ("URL;type=social_facebook;type=pref:" + config.social_facebook.clickUrl) || '',
-            (config.social_linkedin && config.social_linkedin.hidden !== true) && ("URL;type=social_linkedin;type=pref:" + config.social_linkedin.clickUrl) || '',
-            (config.social_twitter && config.social_twitter.hidden !== true) && ("URL;type=social_twitter;type=pref:" + config.social_twitter.clickUrl) || '',
-            (config.social_gplus && config.social_gplus.hidden !== true) && ("URL;type=social_gplus;type=pref:" + config.social_gplus.clickUrl) || '',
-            (config.social_pineterest && config.social_pineterest.hidden !== true) && ("URL;type=social_pineterest;type=pref:" + config.social_pineterest.clickUrl) || '',
-            (config.social_tumblr && config.social_tumblr.hidden !== true) && ("URL;type=social_tumblr;type=pref:" + config.social_tumblr.clickUrl) || '',
-            (config.social_web && config.social_web.hidden !== true) && ("URL;type=social_web;type=pref:" + config.social_web.clickUrl) || '',
-            (config.company_audio && config.company_audio.hidden !== true) && ("URL;type=company_audio;type=pref:" + config.company_audio.clickUrl) || '',
-            (config.company_pdf && config.company_pdf.hidden !== true) && ("URL;type=company_pdf;type=pref:" + config.company_pdf.clickUrl) || '',
-            (config.company_logo && config.company_logo.hidden !== true) && ("URL;type=company_logo_apath;type=pref:" + config.company_logo.absolutePath) || '',
-            (photoAlbum1) && ("URL;type=photo_album_apath1;type=pref:" + photoAlbum1 || '') || '',
-            (photoAlbum2) && ("URL;type=photo_album_apath2;type=pref:" + photoAlbum1 || '') || '',
-            (config.user_photo && config.user_photo.hidden !== true) && ("URL;type=user_photo_apath;type=pref:" + config.user_photo.absolutePath) || '',
-            (config.viewCardPath && config.viewCardPath.hidden !== true) && ("URL;type=My up to date contact info;type=pref:" + config.viewCardPath || '') || '',
-            (config.user_photo && config.user_photo.hidden !== true) && ("PHOTO;VALUE=URL;TYPE=PNG:" + config.user_photo.absolutePath) || '',
-            (config.company_message && config.company_message.hidden !== true) && ("NOTE:"+ config.company_message.text.replace(/(?:\r\n|\r|\n)/g, ', ') || '') || '',
-            "END:VCARD"
-        ].filter(function(n){ return n != '' }).join(lb);
+        // console.log(config);
+        var prefix = [
+                "BEGIN:VCARD",
+                "VERSION:3.0",
+                "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN"],
+            suffix = ["END:VCARD"],
+            vcfBody = [],
+            vCardText = [];
+
+        for (var key in config) {
+            var obj;
+            if (key.indexOf('full_name') !== -1) {
+                obj = config[key];
+                // console.log(obj.text);
+                if (obj.hidden !== true) {
+                    vcfBody.push("N:;" + obj.text + ";;;");
+                    vcfBody.push("FN:" + obj.text);
+                }
+            }
+            if (key.indexOf('company_name') !== -1) {
+                obj = config[key];
+                // console.log(obj.text);
+                (obj.hidden !== true) && vcfBody.push("ORG:" + obj.text);
+            }
+            if (key.indexOf('job_title') !== -1) {
+                obj = config[key];
+                // console.log(obj.text);
+                (obj.hidden !== true) && vcfBody.push("TITLE:" + obj.text);
+            }
+            if (key.indexOf('company_mail') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("EMAIL;type=WORK;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('company_phone') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("TEL;type=work" + (i === 0 ? "" : i)+ ";type=VOICE;type=pref:" + obj.clickUrl);
+                i++;
+            }
+            if (key.indexOf('company_map') !== -1) {
+                obj = config[key];
+                // console.log(obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
+                (obj.hidden !== true) && vcfBody.push("ADR;type=work;type=pref:" + obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
+            }
+            if (key.indexOf('company_video') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=company_video;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('company_web') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=company_web;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_facebook') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_facebook;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_linkedin') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_linkedin;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_twitter') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_twitter;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_gplus') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_gplus;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_pineterest') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_pineterest;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_tumblr') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_tumblr;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('social_web') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=social_web;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('company_audio') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=company_audio;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('company_pdf') !== -1) {
+                obj = config[key];
+                // console.log(obj.clickUrl);
+                (obj.hidden !== true) && vcfBody.push("URL;type=company_pdf;type=pref:" + obj.clickUrl);
+            }
+            if (key.indexOf('company_logo') !== -1) {
+                obj = config[key];
+                // console.log(obj.absolutePath);
+                (obj.hidden !== true) && vcfBody.push("URL;type=company_logo;type=pref:" + obj.absolutePath);
+            }
+            if (key.indexOf('photo_album') !== -1) {
+                obj = config[key];
+
+                if (obj.hidden !== true) {
+                    var photoAlbum1 = obj.images[0] && obj.images[0].absolutePath,
+                        photoAlbum2 = obj.images[1] && obj.images[1].absolutePath;
+
+                    // console.log(obj.images);
+                    vcfBody.push("URL;type=photo_album_apath1;type=pref:" + photoAlbum1);
+                    vcfBody.push("URL;type=photo_album_apath2;type=pref:" + photoAlbum2);
+                }
+            }
+            if (key.indexOf('user_photo') !== -1) {
+                obj = config[key];
+                // console.log(obj.absolutePath);
+                if (obj.hidden !== true) {
+                    vcfBody.push("URL;type=user_photo_apath;type=pref:" + obj.absolutePath);
+                    vcfBody.push("PHOTO;VALUE=URL;TYPE=PNG:" + obj.absolutePath);
+                }
+            }
+            if (key.indexOf('company_message') !== -1) {
+                obj = config[key];
+                // console.log(obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
+                (obj.hidden !== true) && vcfBody.push("NOTE:" + obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
+            }
+        };
+
+        // Add this extra config 'viewCardPath' if its available in requested json
+        if (configs.viewCardPath) {
+            // console.log("URL;type=My up to date contact info;type=pref:" + configs.viewCardPath);
+            vcfBody.push("URL;type=My up to date contact info;type=pref:" + configs.viewCardPath);
+        }
+
+        vCardText = prefix.concat(vcfBody).concat(suffix).filter(function(n){ return (n != '' || n != undefined)}).join(lb);
+        // console.log(vCardText);
+
+        // var photoAlbum1 = config.photo_album && config.photo_album.images[0] && config.photo_album.images[0].absolutePath,
+        //     photoAlbum2 = config.photo_album && config.photo_album.images[1] && config.photo_album.images[1].absolutePath,
+        //     vCardText = ["BEGIN:VCARD",
+        //         "VERSION:3.0",
+        //         "PRODID:-//Apple Inc.//Mac OS X 10.11.2//EN",
+        //     (config.full_name && config.full_name.hidden !== true) && ("N:" + config.full_name.text),
+        //     (config.full_name && config.full_name.hidden !== true) && ("FN:" + config.full_name.text),
+        //     (config.company_name && config.company_name.hidden !== true) && ("ORG:" + config.company_name.text),
+        //     (config.job_title && config.job_title.hidden !== true) && ("TITLE:" + config.job_title.text),
+        //     (config.company_mail && config.company_mail.hidden !== true) && ("EMAIL;type=WORK;type=pref:" + config.company_mail.text),
+        //     (config.company_phone && config.company_phone.hidden !== true) && ("TEL;type=work;type=VOICE;type=pref:" + config.company_phone.clickUrl),
+        //     (config.company_map && config.company_map.hidden !== true)&& ("ADR;type=work;type=pref:" + config.company_map.text.replace(/(?:\r\n|\r|\n)/g, ', ')),
+        //     (config.company_video && config.company_video.hidden !== true) && ("URL;type=company_video;type=pref:" + config.company_video.clickUrl),
+        //     (config.company_web && config.company_web.hidden !== true) && ("URL;type=company_web;type=pref:" + config.company_web.clickUrl),
+        //     (config.social_facebook && config.social_facebook.hidden !== true) && ("URL;type=social_facebook;type=pref:" + config.social_facebook.clickUrl),
+        //     (config.social_linkedin && config.social_linkedin.hidden !== true) && ("URL;type=social_linkedin;type=pref:" + config.social_linkedin.clickUrl),
+        //     (config.social_twitter && config.social_twitter.hidden !== true) && ("URL;type=social_twitter;type=pref:" + config.social_twitter.clickUrl),
+        //     (config.social_gplus && config.social_gplus.hidden !== true) && ("URL;type=social_gplus;type=pref:" + config.social_gplus.clickUrl),
+        //     (config.social_pineterest && config.social_pineterest.hidden !== true) && ("URL;type=social_pineterest;type=pref:" + config.social_pineterest.clickUrl),
+        //     (config.social_tumblr && config.social_tumblr.hidden !== true) && ("URL;type=social_tumblr;type=pref:" + config.social_tumblr.clickUrl),
+        //     (config.social_web && config.social_web.hidden !== true) && ("URL;type=social_web;type=pref:" + config.social_web.clickUrl),
+        //     (config.company_audio && config.company_audio.hidden !== true) && ("URL;type=company_audio;type=pref:" + config.company_audio.clickUrl),
+        //     (config.company_pdf && config.company_pdf.hidden !== true) && ("URL;type=company_pdf;type=pref:" + config.company_pdf.clickUrl),
+        //     (config.company_logo && config.company_logo.hidden !== true) && ("URL;type=company_logo_apath;type=pref:" + config.company_logo.absolutePath),
+        //     (photoAlbum1) && ("URL;type=photo_album_apath1;type=pref:" + photoAlbum1),
+        //     (photoAlbum2) && ("URL;type=photo_album_apath2;type=pref:" + photoAlbum2),
+        //     (config.user_photo && config.user_photo.hidden !== true) && ("URL;type=user_photo_apath;type=pref:" + config.user_photo.absolutePath),
+        //     (config.viewCardPath && config.viewCardPath.hidden !== true) && ("URL;type=My up to date contact info;type=pref:" + config.viewCardPath),
+        //     (config.user_photo && config.user_photo.hidden !== true) && ("PHOTO;VALUE=URL;TYPE=PNG:" + config.user_photo.absolutePath),
+        //     (config.company_message && config.company_message.hidden !== true) && ("NOTE:"+ config.company_message.text.replace(/(?:\r\n|\r|\n)/g, ', ')),
+        //     "END:VCARD"
+        // ].filter(function(n){ return (n != '' || n != undefined)}).join(lb);
 
         return vCardText;
     },
