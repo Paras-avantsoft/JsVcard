@@ -17,7 +17,7 @@ http.createServer(function(req, res) {
             if (err) throw err;
             var obj = JSON.parse(data);
             var vcfData = vcard.convertJsonToVCF(obj);
-            // console.log(vcfData);
+             console.log(vcfData);
             fs.writeFile(__dirname + '/' + uId +'-myvcard.vcf', vcfData, function(err){
                 if (err) throw err;
             });

@@ -23,7 +23,7 @@
     function handleLoad(evt) {
         var xhttp = new XMLHttpRequest();
         var fd = new FormData();
-        xhttp.open('POST', "http://192.168.2.8:4786/vcardimport", true);
+        xhttp.open('POST', "http://192.168.2.4:4786/vcardimport", true);
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState == XMLHttpRequest.DONE) {
                 console.log(xhttp.responseText);
@@ -38,7 +38,7 @@
     function sendAjax() {
         var xhttp = new XMLHttpRequest();
 
-        xhttp.open('GET', "http://192.168.2.8:4786/configdata?uId=1453934202057", true);
+        xhttp.open('GET', "http://192.168.2.4:4786/configdata?uId=1453934202057", true);
         xhttp.onreadystatechange = function() {
             if (xhttp.readyState == XMLHttpRequest.DONE) {
                 var link = document.getElementById("downloadfromserver");

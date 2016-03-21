@@ -202,11 +202,11 @@ var vCard = {
                 // console.log(obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
                 (obj.hidden !== true) && vcfBody.push("ADR;type=work;type=pref:" + obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
             }
-            if (key.indexOf('company_video') !== -1) {
-                obj = config[key];
-                // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=video;type=pref:" + obj.clickUrl);
-            }
+            // if (key.indexOf('company_video') !== -1) {
+            //     obj = config[key];
+            //     // console.log(obj.clickUrl);
+            //     (obj.hidden !== true) && vcfBody.push("URL;type=video;type=pref:" + obj.clickUrl);
+            // }
             if (key.indexOf('company_web') !== -1) {
                 obj = config[key];
                 // console.log(obj.clickUrl);
@@ -247,41 +247,41 @@ var vCard = {
                 // console.log(obj.clickUrl);
                 (obj.hidden !== true) && vcfBody.push("URL;type=socialurl;type=pref:" + obj.clickUrl);
             }
-            if (key.indexOf('company_audio') !== -1) {
-                obj = config[key];
-                // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=audio;type=pref:" + obj.clickUrl);
-            }
-            if (key.indexOf('company_pdf') !== -1) {
-                obj = config[key];
-                // console.log(obj.clickUrl);
-                (obj.hidden !== true) && vcfBody.push("URL;type=pdf;type=pref:" + obj.clickUrl);
-            }
-            if (key.indexOf('company_logo') !== -1) {
-                obj = config[key];
-                // console.log(obj.absolutePath);
-                (obj.hidden !== true) && vcfBody.push("URL;type=logo;type=pref:" + obj.absolutePath);
-            }
-            if (key.indexOf('photo_album') !== -1) {
-                obj = config[key];
+            // if (key.indexOf('company_audio') !== -1) {
+            //     obj = config[key];
+            //     // console.log(obj.clickUrl);
+            //     (obj.hidden !== true) && vcfBody.push("URL;type=audio;type=pref:" + obj.clickUrl);
+            // }
+            // if (key.indexOf('company_pdf') !== -1) {
+            //     obj = config[key];
+            //     // console.log(obj.clickUrl);
+            //     (obj.hidden !== true) && vcfBody.push("URL;type=pdf;type=pref:" + obj.clickUrl);
+            // }
+            // if (key.indexOf('company_logo') !== -1) {
+            //     obj = config[key];
+            //     // console.log(obj.absolutePath);
+            //     (obj.hidden !== true) && vcfBody.push("URL;type=logo;type=pref:" + obj.absolutePath);
+            // }
+            // if (key.indexOf('photo_album') !== -1) {
+            //     obj = config[key];
 
-                if (obj.hidden !== true) {
-                    var photoAlbum1 = obj.images[0] && obj.images[0].absolutePath,
-                        photoAlbum2 = obj.images[1] && obj.images[1].absolutePath;
+            //     if (obj.hidden !== true) {
+            //         var photoAlbum1 = obj.images[0] && obj.images[0].absolutePath,
+            //             photoAlbum2 = obj.images[1] && obj.images[1].absolutePath;
 
-                    // console.log(obj.images);
-                    vcfBody.push("URL;type=album1;type=pref:" + photoAlbum1);
-                    vcfBody.push("URL;type=album2;type=pref:" + photoAlbum2);
-                }
-            }
-            if (key.indexOf('user_photo') !== -1) {
-                obj = config[key];
-                // console.log(obj.absolutePath);
-                if (obj.hidden !== true) {
-                    vcfBody.push("URL;type=userPhoto;type=pref:" + obj.absolutePath);
-                    vcfBody.push("PHOTO;VALUE=URL;TYPE=PNG:" + obj.absolutePath);
-                }
-            }
+            //         // console.log(obj.images);
+            //         vcfBody.push("URL;type=album1;type=pref:" + photoAlbum1);
+            //         vcfBody.push("URL;type=album2;type=pref:" + photoAlbum2);
+            //     }
+            // }
+            // if (key.indexOf('user_photo') !== -1) {
+            //     obj = config[key];
+            //     // console.log(obj.absolutePath);
+            //     if (obj.hidden !== true) {
+            //         vcfBody.push("URL;type=userPhoto;type=pref:" + obj.absolutePath);
+            //         // vcfBody.push("PHOTO;VALUE=URL;TYPE=PNG:" + obj.absolutePath);
+            //     }
+            // }
             if (key.indexOf('company_message') !== -1) {
                 obj = config[key];
                 // console.log(obj.text.replace(/(?:\r\n|\r|\n)/g, ', '));
